@@ -7,6 +7,13 @@ import { VitePWA } from 'vite-plugin-pwa';
 // sous-chemin (ex. /VibecodedPiano/nouvelle-ui/, voir .github/workflows/deploy.yml).
 const deployBase = process.env.VITE_DEPLOY_BASE || '/VibecodedPiano/';
 
+// Désactive la génération du service worker/manifeste pour un build de prévisualisation : deux
+// service workers imbriqués (scope /VibecodedPiano/ et /VibecodedPiano/nouvelle-ui/) sur le même
+// origin peuvent se disputer le contrôle des pages au premier chargement. Le import
+// virtual:pwa-register reste résolu (VitePWA({ disable }) fournit un registerSW no-op) : pas
+// besoin de toucher src/main.js.
+const disablePwa = process.env.VITE_DISABLE_PWA === 'true';
+
 export default defineConfig({
   base: deployBase,
   resolve: {
@@ -16,6 +23,7 @@ export default defineConfig({
   },
   plugins: [
     VitePWA({
+      disable: disablePwa,
       registerType: 'autoUpdate',
       // On enregistre le service worker nous-mêmes via virtual:pwa-register (src/main.js), pour
       // afficher le bandeau "nouvelle version disponible" sur onNeedRefresh plutôt que de laisser
