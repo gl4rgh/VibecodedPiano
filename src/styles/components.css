@@ -1,0 +1,172 @@
+/* Styles des composants UI (bibliothèque, éditeur, mode jeu). À étoffer phase par phase. */
+
+.note-scheme-toggle {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+}
+
+.note-scheme-toggle legend {
+  padding: 0 6px;
+  color: var(--color-text-dim);
+  font-size: 0.85rem;
+}
+
+.note-scheme-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.pdf-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.pdf-toolbar button {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 1.1rem;
+}
+
+/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
+   Hauteur fixe (et non 100%) : cette vue empile plusieurs panneaux de test manuel tant que
+   ui/view-library.js (P4) n'a pas remplacé ce harnais provisoire. */
+.pdf-viewer {
+  position: relative;
+  overflow-y: auto;
+  height: 45vh;
+  background: #0a0a0a;
+}
+
+.pdf-page {
+  position: relative;
+  margin: 12px auto;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.pdf-page canvas {
+  display: block;
+}
+
+.midi-debug {
+  border-top: 1px solid var(--color-border);
+  padding-top: 8px;
+}
+
+.midi-debug h2 {
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+  color: var(--color-text-dim);
+}
+
+.midi-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.midi-toolbar button,
+.midi-toolbar select {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 10px;
+}
+
+.midi-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+}
+
+.midi-status[data-status='ready'] {
+  color: #6fdc8c;
+}
+
+.midi-status[data-status='denied'],
+.midi-status[data-status='unsupported'] {
+  color: var(--color-danger);
+}
+
+.midi-log {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.midi-log li {
+  padding: 2px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.midi-timeline {
+  position: relative;
+  overflow-y: auto;
+  height: 260px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.midi-timeline-spacer {
+  position: relative;
+}
+
+.midi-timeline-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.midi-timeline-row.current {
+  background: var(--color-accent);
+  color: #06131f;
+}
+
+.midi-timeline-index {
+  color: var(--color-text-dim);
+  width: 3.5em;
+}
+
+.midi-timeline-row.current .midi-timeline-index {
+  color: inherit;
+}
+
+.midi-timeline-time {
+  width: 3.5em;
+}
+
+.midi-timeline-notes {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,1 +1,7 @@
+node_modules/
+dist/
+*.pdf
+*.mid
+*.midi
+!tests/fixtures/*.mid
 plan.md
