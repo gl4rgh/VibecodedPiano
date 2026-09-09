@@ -1,4 +1,4 @@
-# VibecodedPiano — v0.1 \o/
+# VibecodedPiano — v0.1
 
 Suiveur de partition PWA : affiche un PDF de partition et le fait défiler automatiquement
 en suivant les notes jouées sur un clavier MIDI (Web MIDI API), via un fichier MIDI de
