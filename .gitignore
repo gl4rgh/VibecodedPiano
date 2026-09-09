@@ -4,4 +4,6 @@ dist/
 *.mid
 *.midi
 !tests/fixtures/*.mid
+!examples/*.pdf
+!examples/*.mid
 plan.md
