@@ -20,12 +20,7 @@ export default defineConfig({
         // Sans le worker pdf.js (pdf.worker.min-*.mjs, servi comme asset JS séparé), le rendu
         // PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire. Le motif
         // *.mjs le couvre déjà.
-        globPatterns: ['**/*.{js,mjs,css,html,png,svg}'],
-        // Sans ça, le NavigationRoute par défaut de ce service worker (scope /VibecodedPiano/)
-        // intercepte AUSSI les navigations vers /VibecodedPiano/nouvelle-ui/ (prévisualisation de
-        // la refonte UI déployée à côté, voir index.html) et leur sert le index.html de ce site
-        // au lieu du sien — page cassée après la première visite du site principal.
-        navigateFallbackDenylist: [/\/nouvelle-ui\//],
+        globPatterns: ['**/*.{js,mjs,css,html,png,svg,woff2}'],
       },
       manifest: {
         name: 'VibecodedPiano',
@@ -36,8 +31,9 @@ export default defineConfig({
         scope: '/VibecodedPiano/',
         display: 'standalone',
         orientation: 'any',
-        background_color: '#121212',
-        theme_color: '#121212',
+        // Palette Nocturne (refonte cosmétique) — cohérence avec base.css --color-bg/--color-accent.
+        background_color: '#161826',
+        theme_color: '#161826',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
