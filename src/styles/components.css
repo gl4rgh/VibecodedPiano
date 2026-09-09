@@ -16,11 +16,13 @@
   font-size: 1.1rem;
 }
 
-/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique. */
+/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
+   Hauteur fixe (et non 100%) : cette vue empile plusieurs panneaux de test manuel tant que
+   ui/view-library.js (P4) n'a pas remplacé ce harnais provisoire. */
 .pdf-viewer {
   position: relative;
   overflow-y: auto;
-  height: calc(100% - 200px);
+  height: 45vh;
   background: #0a0a0a;
 }
 
@@ -93,4 +95,55 @@
 .midi-log li {
   padding: 2px 0;
   border-bottom: 1px solid var(--color-border);
+}
+
+.midi-timeline {
+  position: relative;
+  overflow-y: auto;
+  height: 260px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.midi-timeline-spacer {
+  position: relative;
+}
+
+.midi-timeline-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.midi-timeline-row.current {
+  background: var(--color-accent);
+  color: #06131f;
+}
+
+.midi-timeline-index {
+  color: var(--color-text-dim);
+  width: 3.5em;
+}
+
+.midi-timeline-row.current .midi-timeline-index {
+  color: inherit;
+}
+
+.midi-timeline-time {
+  width: 3.5em;
+}
+
+.midi-timeline-notes {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

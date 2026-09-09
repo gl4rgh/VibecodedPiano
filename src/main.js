@@ -1,5 +1,7 @@
 import { PdfViewer } from './pdf/pdf-viewer.js';
 import { MidiInput } from './core/midi-input.js';
+import { parseReference } from './core/midi-reference.js';
+import { MidiTimeline } from './ui/midi-timeline.js';
 import { noteName } from './util/note-names.js';
 
 const views = {
@@ -115,4 +117,29 @@ if (midiConnectBtn && midiPortSelect && midiStatusEl && midiLogEl) {
 
   // Exposé pour vérification manuelle en console.
   window.__midiInput = midiInput;
+}
+
+// --- Test manuel P3 : parsing MIDI de référence + timeline. Sera remplacé par
+// ui/view-editor.js en P4.
+const midiRefFileInput = document.getElementById('midi-ref-file-input');
+const midiRefSummary = document.getElementById('midi-ref-summary');
+const midiTimelineContainer = document.getElementById('midi-timeline-container');
+
+if (midiRefFileInput && midiRefSummary && midiTimelineContainer) {
+  const timeline = new MidiTimeline(midiTimelineContainer);
+
+  midiRefFileInput.addEventListener('change', async () => {
+    const file = midiRefFileInput.files?.[0];
+    if (!file) return;
+    const buf = await file.arrayBuffer();
+    const { events, ppq, durationSec, trackCount } = parseReference(buf);
+    midiRefSummary.textContent =
+      `${events.length} événements · ${trackCount} pistes · ppq=${ppq} · ` +
+      `durée=${durationSec.toFixed(1)}s`;
+    console.log(`[MIDI ref] ${midiRefSummary.textContent}`);
+    timeline.setEvents(events);
+  });
+
+  // Exposé pour vérification manuelle en console.
+  window.__midiTimeline = timeline;
 }

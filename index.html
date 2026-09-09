@@ -34,6 +34,15 @@
           </div>
           <ul id="midi-log" class="midi-log"></ul>
         </div>
+
+        <!-- Test manuel P3 : parsing du MIDI de référence + timeline. Remplacé par
+             ui/view-editor.js en P4 — voir plan.md §7. -->
+        <div class="midi-ref-debug">
+          <h2>Debug MIDI de référence</h2>
+          <input type="file" id="midi-ref-file-input" accept=".mid,.midi" />
+          <p id="midi-ref-summary" class="midi-ref-summary"></p>
+          <div id="midi-timeline-container"></div>
+        </div>
       </section>
 
       <section id="view-editor" class="view" hidden>
