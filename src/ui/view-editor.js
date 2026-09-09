@@ -6,6 +6,7 @@ import { getPiece, updatePiece, getGlobalSettings } from '../core/store.js';
 import { sortAnchors, upsertAnchor, removeAnchor, exportJson, importJson, sha256Hex } from '../core/anchors.js';
 import { noteName } from '../util/note-names.js';
 import { resolveSettings } from '../core/settings.js';
+import { AudioPreview } from '../util/audio-preview.js';
 
 const NOTE_FLASH_MS = 250;
 
@@ -39,6 +40,7 @@ export function mountEditorView(container) {
   const anchorPagesBtn = container.querySelector('#editor-anchor-pages');
   const modeStatusEl = container.querySelector('#editor-mode-status');
   const timelineContainer = container.querySelector('#editor-timeline-container');
+  const previewPlayBtn = container.querySelector('#editor-preview-play');
   const anchorListEl = container.querySelector('#editor-anchor-list');
   const connectMidiBtn = container.querySelector('#editor-connect-midi');
   const midiPortSelect = container.querySelector('#editor-midi-port-select');
@@ -62,6 +64,7 @@ export function mountEditorView(container) {
   const pdfViewer = new PdfViewer(pdfContainer);
   const midiTimeline = new MidiTimeline(timelineContainer);
   const midiInput = new MidiInput();
+  const audioPreview = new AudioPreview();
 
   /** @type {import('../core/store.js').Piece | null} */
   let piece = null;
@@ -100,6 +103,27 @@ export function mountEditorView(container) {
       setModeStatus(`Événement ${selectedEventIndex} sélectionné — clique sur le PDF pour poser l'ancre.`);
     }
   });
+
+  // --- Pré-écoute WebAudio (plan.md §8/P8) : se repérer à l'oreille en posant des ancres -----
+  previewPlayBtn.addEventListener('click', () => {
+    if (audioPreview.playing) {
+      audioPreview.stop();
+      resetPreviewButton();
+      return;
+    }
+    if (refEvents.length === 0) return;
+    const fromIndex = selectedEventIndex >= 0 ? selectedEventIndex : 0;
+    previewPlayBtn.textContent = '■ Arrêter';
+    audioPreview.play(refEvents, fromIndex, {
+      onEventStart: (i) => midiTimeline.setCurrentIndex(i),
+      onEnd: resetPreviewButton,
+    });
+  });
+
+  function resetPreviewButton() {
+    previewPlayBtn.textContent = '▶ Pré-écouter';
+    midiTimeline.setCurrentIndex(-1);
+  }
 
   modeSelectBtn.addEventListener('click', () => setMode(mode === 'select' ? null : 'select'));
   modeCaptureBtn.addEventListener('click', () => setMode(mode === 'capture' ? null : 'capture'));
@@ -436,6 +460,8 @@ export function mountEditorView(container) {
   // --- Ouverture / fermeture --------------------------------------------------------------------
   async function open(id) {
     if (!id) return;
+    audioPreview.stop();
+    resetPreviewButton();
     const loaded = await getPiece(id);
     if (!loaded) {
       alert('Morceau introuvable.');
@@ -480,7 +506,9 @@ export function mountEditorView(container) {
   }
 
   function close() {
-    // Rien à libérer : pdfViewer/midiTimeline/midiInput sont réutilisés à la prochaine ouverture.
+    audioPreview.stop();
+    resetPreviewButton();
+    // Sinon rien à libérer : pdfViewer/midiTimeline/midiInput sont réutilisés à la prochaine ouverture.
   }
 
   function setNoteScheme(scheme) {
