@@ -1,32 +1,13 @@
-# VibecodedPiano
+# VibecodedPiano — v0.1 \o/
 
 Suiveur de partition PWA : affiche un PDF de partition et le fait défiler automatiquement
 en suivant les notes jouées sur un clavier MIDI (Web MIDI API), via un fichier MIDI de
 référence et une table d'ancrages posée à la main.
 
-## Travailler depuis plusieurs appareils
-
-Ce repo est la seule source de vérité pour le code — aucun état local persistant en dehors de
-git. Le workflow est du git classique :
-
-```bash
-git clone https://github.com/gl4rgh/VibecodedPiano.git
-cd VibecodedPiano
-git pull          # avant de commencer une session
-# ... travail ...
-git push          # à la fin d'une phase / d'une session
-```
+Projet en cours de développement, phase de test.
 
 Les partitions PDF et fichiers MIDI de travail ne sont **jamais** commités (voir `.gitignore`)
 — ils sont importés depuis le navigateur et stockés en IndexedDB, propre à chaque appareil.
-Un morceau ajouté sur un appareil doit être réimporté sur les autres.
-
-## Statut
-
-Phases terminées : **P0 → P3** (setup, affichage PDF, listener MIDI, parsing du MIDI de
-référence). L'interface actuelle est un harnais de test manuel dans la vue Bibliothèque
-(import PDF, connexion clavier, import MIDI de référence + timeline) — l'UI définitive
-(bibliothèque, éditeur d'ancrages, mode jeu) arrive en P4 et suivantes.
 
 ## Tester l'application
 
