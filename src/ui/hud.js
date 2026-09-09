@@ -1,9 +1,9 @@
 const NOTE_FLASH_MS = 250;
 
 /**
- * HUD discret du mode jeu : position dans le morceau, ancre active, pastille d'état MIDI,
- * dernière note reçue, compteur d'erreurs. Purement affichage — aucune logique de synchro ici
- * (voir view-play.js).
+ * HUD discret du mode jeu : position dans le morceau, prochaine touche/accord attendu, ancre
+ * active, pastille d'état MIDI, dernière note reçue, compteur d'erreurs. Purement affichage —
+ * aucune logique de synchro ici (voir view-play.js).
  */
 export class Hud {
   /** @param {HTMLElement} container */
@@ -12,17 +12,28 @@ export class Hud {
     container.classList.add('hud');
     container.innerHTML =
       '<span class="hud-position">0/0</span>' +
+      '<span class="hud-expected">Attendu : —</span>' +
       '<span class="hud-anchor">—</span>' +
       '<span class="hud-midi-dot" data-status="idle" title="idle"></span>' +
       '<span class="hud-last-note">en attente de notes…</span>' +
       '<span class="hud-errors">0 erreur</span>';
 
     this._positionEl = container.querySelector('.hud-position');
+    this._expectedEl = container.querySelector('.hud-expected');
     this._anchorEl = container.querySelector('.hud-anchor');
     this._midiDotEl = container.querySelector('.hud-midi-dot');
     this._lastNoteEl = container.querySelector('.hud-last-note');
     this._errorsEl = container.querySelector('.hud-errors');
     this._flashTimer = null;
+  }
+
+  /**
+   * Prochaine touche (ou accord) attendu par le matcher — répond à « où en suis-je ? » sans
+   * devoir regarder la partition pour déchiffrer la note suivante.
+   * @param {string[]} labels noms de note déjà formatés (util/note-names.js), vide = fin du morceau
+   */
+  setExpected(labels) {
+    this._expectedEl.textContent = labels.length > 0 ? `Attendu : ${labels.join(' + ')}` : 'Terminé';
   }
 
   /**

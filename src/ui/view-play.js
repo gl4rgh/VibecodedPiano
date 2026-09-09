@@ -126,6 +126,8 @@ export function mountPlayView(container) {
     if (!matcher) return;
     hud.setPosition(matcher.cursor, refEvents.length);
     hud.setErrorCount(matcher.stats.rejected);
+    const pending = refEvents[matcher.cursor]?.pitches ?? [];
+    hud.setExpected(pending.map((p) => noteName(p, noteScheme)));
   }
 
   async function open(id) {
@@ -168,6 +170,7 @@ export function mountPlayView(container) {
 
   function setNoteScheme(scheme) {
     noteScheme = scheme;
+    refreshHud();
   }
 
   return { open, close, setNoteScheme };

@@ -584,6 +584,15 @@
   white-space: nowrap;
 }
 
+.hud-expected {
+  color: var(--color-accent);
+  font-weight: 600;
+  max-width: 14em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .play-controls {
   display: flex;
   flex-wrap: wrap;
