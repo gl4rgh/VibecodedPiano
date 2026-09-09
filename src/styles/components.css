@@ -1,1 +1,36 @@
 /* Styles des composants UI (bibliothèque, éditeur, mode jeu). À étoffer phase par phase. */
+
+.pdf-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.pdf-toolbar button {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 1.1rem;
+}
+
+/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique. */
+.pdf-viewer {
+  position: relative;
+  overflow-y: auto;
+  height: calc(100% - 200px);
+  background: #0a0a0a;
+}
+
+.pdf-page {
+  position: relative;
+  margin: 12px auto;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.pdf-page canvas {
+  display: block;
+}

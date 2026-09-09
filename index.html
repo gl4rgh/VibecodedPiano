@@ -12,6 +12,14 @@
     <main id="app">
       <section id="view-library" class="view" hidden>
         <h1>Bibliothèque</h1>
+        <!-- Test manuel P1 : import PDF direct, sans base. Remplacé par la vraie
+             bibliothèque (IndexedDB) en P4 — voir plan.md §7. -->
+        <div class="pdf-toolbar">
+          <input type="file" id="pdf-file-input" accept="application/pdf" />
+          <button type="button" id="pdf-zoom-out" aria-label="Zoom -">−</button>
+          <button type="button" id="pdf-zoom-in" aria-label="Zoom +">+</button>
+        </div>
+        <div id="pdf-container" class="pdf-container"></div>
       </section>
 
       <section id="view-editor" class="view" hidden>
