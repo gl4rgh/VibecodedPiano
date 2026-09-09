@@ -9,13 +9,17 @@ const OVERSCAN = 8; // lignes de marge de chaque côté de la zone visible
  * fenêtre, pas d'innerHTML massif (plan.md §7/P3).
  */
 export class MidiTimeline {
-  /** @param {HTMLElement} container */
-  constructor(container) {
+  /**
+   * @param {HTMLElement} container
+   * @param {{ noteScheme?: 'en'|'solfege' }} [opts]
+   */
+  constructor(container, opts = {}) {
     this.container = container;
     this.container.classList.add('midi-timeline');
 
     this._events = [];
     this._currentIndex = -1;
+    this._noteScheme = opts.noteScheme ?? 'en';
     this._rows = new Map(); // index -> HTMLElement
     this._raf = null;
 
@@ -42,6 +46,15 @@ export class MidiTimeline {
     this._rows.get(this._currentIndex)?.classList.remove('current');
     this._currentIndex = index;
     this._rows.get(index)?.classList.add('current');
+  }
+
+  /** @param {'en'|'solfege'} scheme */
+  setNoteScheme(scheme) {
+    if (scheme === this._noteScheme) return;
+    this._noteScheme = scheme;
+    for (const el of this._rows.values()) el.remove();
+    this._rows.clear();
+    this._renderWindow();
   }
 
   destroy() {
@@ -90,7 +103,7 @@ export class MidiTimeline {
   _buildRow(event) {
     const el = document.createElement('div');
     el.className = 'midi-timeline-row';
-    const names = event.pitches.map(noteName).join(' ');
+    const names = event.pitches.map((p) => noteName(p, this._noteScheme)).join(' ');
     el.innerHTML =
       `<span class="midi-timeline-index">${event.index}</span>` +
       `<span class="midi-timeline-time">${formatTime(event.time)}</span>` +

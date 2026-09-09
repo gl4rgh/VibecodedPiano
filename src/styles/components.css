@@ -1,5 +1,28 @@
 /* Styles des composants UI (bibliothèque, éditeur, mode jeu). À étoffer phase par phase. */
 
+.note-scheme-toggle {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+}
+
+.note-scheme-toggle legend {
+  padding: 0 6px;
+  color: var(--color-text-dim);
+  font-size: 0.85rem;
+}
+
+.note-scheme-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
 .pdf-toolbar {
   display: flex;
   gap: 8px;

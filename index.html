@@ -12,6 +12,15 @@
     <main id="app">
       <section id="view-library" class="view" hidden>
         <h1>Bibliothèque</h1>
+
+        <!-- Réglage global provisoire : passera dans core/store.js (réglages) en P6.
+             Affecte le panneau debug MIDI (P2) et la timeline de référence (P3). -->
+        <fieldset class="note-scheme-toggle">
+          <legend>Notation des notes</legend>
+          <label><input type="radio" name="note-scheme" value="en" checked /> A B C (anglais)</label>
+          <label><input type="radio" name="note-scheme" value="solfege" /> Do Ré Mi (solfège)</label>
+        </fieldset>
+
         <!-- Test manuel P1 : import PDF direct, sans base. Remplacé par la vraie
              bibliothèque (IndexedDB) en P4 — voir plan.md §7. -->
         <div class="pdf-toolbar">

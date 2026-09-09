@@ -33,6 +33,19 @@ function render() {
 window.addEventListener('hashchange', render);
 render();
 
+// --- Réglage provisoire de notation des notes (anglais/solfège), partagé entre les
+// panneaux de test P2 et P3. Deviendra un vrai réglage persisté (core/store.js) en P6.
+let noteScheme = 'en';
+let midiTimeline = null;
+
+document.querySelectorAll('input[name="note-scheme"]').forEach((radio) => {
+  radio.addEventListener('change', () => {
+    if (!radio.checked) return;
+    noteScheme = radio.value;
+    midiTimeline?.setNoteScheme(noteScheme);
+  });
+});
+
 // --- Test manuel P1 : import PDF direct dans la bibliothèque, sans base IndexedDB.
 // Sera remplacé par ui/view-library.js en P4.
 const pdfContainer = document.getElementById('pdf-container');
@@ -86,8 +99,8 @@ if (midiConnectBtn && midiPortSelect && midiStatusEl && midiLogEl) {
 
   const logEvent = (kind, detail) => {
     const label = kind === 'noteon'
-      ? `note-on ${detail.pitch} (${noteName(detail.pitch)}) vel=${detail.velocity} ch=${detail.channel + 1}`
-      : `note-off ${detail.pitch} (${noteName(detail.pitch)}) ch=${detail.channel + 1}`;
+      ? `note-on ${detail.pitch} (${noteName(detail.pitch, noteScheme)}) vel=${detail.velocity} ch=${detail.channel + 1}`
+      : `note-off ${detail.pitch} (${noteName(detail.pitch, noteScheme)}) ch=${detail.channel + 1}`;
     console.log(`[MIDI] ${label}`);
 
     const li = document.createElement('li');
@@ -126,7 +139,7 @@ const midiRefSummary = document.getElementById('midi-ref-summary');
 const midiTimelineContainer = document.getElementById('midi-timeline-container');
 
 if (midiRefFileInput && midiRefSummary && midiTimelineContainer) {
-  const timeline = new MidiTimeline(midiTimelineContainer);
+  midiTimeline = new MidiTimeline(midiTimelineContainer, { noteScheme });
 
   midiRefFileInput.addEventListener('change', async () => {
     const file = midiRefFileInput.files?.[0];
@@ -137,9 +150,9 @@ if (midiRefFileInput && midiRefSummary && midiTimelineContainer) {
       `${events.length} événements · ${trackCount} pistes · ppq=${ppq} · ` +
       `durée=${durationSec.toFixed(1)}s`;
     console.log(`[MIDI ref] ${midiRefSummary.textContent}`);
-    timeline.setEvents(events);
+    midiTimeline.setEvents(events);
   });
 
   // Exposé pour vérification manuelle en console.
-  window.__midiTimeline = timeline;
+  window.__midiTimeline = midiTimeline;
 }
