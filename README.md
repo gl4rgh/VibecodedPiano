@@ -46,16 +46,3 @@ l'accepter. Le bouton « Connecter le clavier » (dans l'éditeur ou le mode jeu
 demande — un geste utilisateur est requis par l'API Web MIDI, elle ne peut pas se connecter
 seule au chargement.
 
-### En développement local
-
-```bash
-npm install
-npm run dev       # serveur de dev Vite
-npm run build     # build de production → dist/
-npm test          # tests Vitest (logique pure : matcher, parsing MIDI, ancrages)
-```
-
-Le serveur de dev local (`npm run dev`) tourne en `http://localhost`, un contexte sécurisé lui
-aussi : Web MIDI y fonctionne. Ce qui ne fonctionne pas en local, c'est de tester depuis un
-*autre* appareil sur le même réseau (`--host` expose l'app en `http://<IP>`, non sécurisé) —
-dans ce cas, préférer l'URL GitHub Pages ci-dessus.
