@@ -4,8 +4,9 @@ import { locatePoint } from './pdf-geometry.js';
 const RENDER_MARGIN_PAGES = 1;
 const MAX_CANVAS_SIDE = 4096;
 const USER_SCROLLING_TIMEOUT_MS = 4000;
-const MIN_SCALE = 0.3;
+const MIN_SCALE = 0.15;
 const MAX_SCALE = 4;
+const FIT_WIDTH_MARGIN = 0.96;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -65,8 +66,11 @@ export class PdfViewer {
     this.pdfDoc = await getDocument(buf);
     const pageCount = this.pdfDoc.numPages;
 
+    const firstPage = await this.pdfDoc.getPage(1);
+    this.scale = this._computeFitWidthScale(firstPage);
+
     for (let i = 1; i <= pageCount; i++) {
-      const page = await this.pdfDoc.getPage(i);
+      const page = i === 1 ? firstPage : await this.pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: this.scale });
 
       const div = document.createElement('div');
@@ -122,6 +126,18 @@ export class PdfViewer {
       height: entry.div.offsetHeight,
     }));
     return locatePoint(boxes, y);
+  }
+
+  /**
+   * Échelle initiale : la page tient dans la largeur du conteneur (moins une petite marge),
+   * au lieu de l'échelle native du PDF qui déborde souvent sur mobile/tablette.
+   * @param {import('pdfjs-dist').PDFPageProxy} page
+   */
+  _computeFitWidthScale(page) {
+    const nativeWidth = page.getViewport({ scale: 1 }).width;
+    const available = this.container.clientWidth || nativeWidth;
+    const fit = (available * FIT_WIDTH_MARGIN) / nativeWidth;
+    return clamp(fit, MIN_SCALE, MAX_SCALE);
   }
 
   /** @param {number} scale */

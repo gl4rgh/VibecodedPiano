@@ -10,17 +10,7 @@
   </head>
   <body>
     <main id="app">
-      <section id="view-library" class="view" hidden>
-        <h1>Bibliothèque</h1>
-
-        <!-- Réglage global provisoire : passera dans core/store.js (réglages) en P6.
-             Affecte le panneau debug MIDI (P2) et la timeline de référence (P3). -->
-        <fieldset class="note-scheme-toggle">
-          <legend>Notation des notes</legend>
-          <label><input type="radio" name="note-scheme" value="en" checked /> A B C (anglais)</label>
-          <label><input type="radio" name="note-scheme" value="solfege" /> Do Ré Mi (solfège)</label>
-        </fieldset>
-
+      <section id="view-library" class="view view-library" hidden>
         <!-- Test manuel P1 : import PDF direct, sans base. Remplacé par la vraie
              bibliothèque (IndexedDB) en P4 — voir plan.md §7. -->
         <div class="pdf-toolbar">
@@ -30,28 +20,42 @@
         </div>
         <div id="pdf-container" class="pdf-container"></div>
 
-        <!-- Test manuel P2 : panneau debug MIDI. Le statut et le HUD définitifs
-             arrivent en P5 (ui/hud.js) — voir plan.md §7. -->
-        <div class="midi-debug">
-          <h2>Debug MIDI</h2>
-          <div class="midi-toolbar">
-            <button type="button" id="midi-connect">Connecter le clavier</button>
-            <select id="midi-port-select" aria-label="Port MIDI">
-              <option value="">Tous les ports</option>
-            </select>
-            <span id="midi-status" class="midi-status" data-status="idle">idle</span>
-          </div>
-          <ul id="midi-log" class="midi-log"></ul>
-        </div>
+        <!-- Panneaux de réglages/debug, repliés par défaut pour laisser le maximum
+             de place au viewer PDF. Remplacés par les vraies vues en P4/P5/P6. -->
+        <details class="debug-panels">
+          <summary>Réglages &amp; debug MIDI</summary>
 
-        <!-- Test manuel P3 : parsing du MIDI de référence + timeline. Remplacé par
-             ui/view-editor.js en P4 — voir plan.md §7. -->
-        <div class="midi-ref-debug">
-          <h2>Debug MIDI de référence</h2>
-          <input type="file" id="midi-ref-file-input" accept=".mid,.midi" />
-          <p id="midi-ref-summary" class="midi-ref-summary"></p>
-          <div id="midi-timeline-container"></div>
-        </div>
+          <!-- Réglage global provisoire : passera dans core/store.js (réglages) en P6.
+               Affecte le panneau debug MIDI (P2) et la timeline de référence (P3). -->
+          <fieldset class="note-scheme-toggle">
+            <legend>Notation des notes</legend>
+            <label><input type="radio" name="note-scheme" value="en" checked /> Anglais</label>
+            <label><input type="radio" name="note-scheme" value="solfege" /> Solfège</label>
+          </fieldset>
+
+          <!-- Test manuel P2 : panneau debug MIDI. Le statut et le HUD définitifs
+               arrivent en P5 (ui/hud.js) — voir plan.md §7. -->
+          <div class="midi-debug">
+            <h2>Debug MIDI</h2>
+            <div class="midi-toolbar">
+              <button type="button" id="midi-connect">Connecter le clavier</button>
+              <select id="midi-port-select" aria-label="Port MIDI">
+                <option value="">Tous les ports</option>
+              </select>
+              <span id="midi-status" class="midi-status" data-status="idle">idle</span>
+            </div>
+            <ul id="midi-log" class="midi-log"></ul>
+          </div>
+
+          <!-- Test manuel P3 : parsing du MIDI de référence + timeline. Remplacé par
+               ui/view-editor.js en P4 — voir plan.md §7. -->
+          <div class="midi-ref-debug">
+            <h2>Debug MIDI de référence</h2>
+            <input type="file" id="midi-ref-file-input" accept=".mid,.midi" />
+            <p id="midi-ref-summary" class="midi-ref-summary"></p>
+            <div id="midi-timeline-container"></div>
+          </div>
+        </details>
       </section>
 
       <section id="view-editor" class="view" hidden>
