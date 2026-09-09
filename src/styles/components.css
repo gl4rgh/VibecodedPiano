@@ -34,3 +34,63 @@
 .pdf-page canvas {
   display: block;
 }
+
+.midi-debug {
+  border-top: 1px solid var(--color-border);
+  padding-top: 8px;
+}
+
+.midi-debug h2 {
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+  color: var(--color-text-dim);
+}
+
+.midi-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.midi-toolbar button,
+.midi-toolbar select {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 10px;
+}
+
+.midi-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+}
+
+.midi-status[data-status='ready'] {
+  color: #6fdc8c;
+}
+
+.midi-status[data-status='denied'],
+.midi-status[data-status='unsupported'] {
+  color: var(--color-danger);
+}
+
+.midi-log {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.midi-log li {
+  padding: 2px 0;
+  border-bottom: 1px solid var(--color-border);
+}

@@ -20,6 +20,20 @@
           <button type="button" id="pdf-zoom-in" aria-label="Zoom +">+</button>
         </div>
         <div id="pdf-container" class="pdf-container"></div>
+
+        <!-- Test manuel P2 : panneau debug MIDI. Le statut et le HUD définitifs
+             arrivent en P5 (ui/hud.js) — voir plan.md §7. -->
+        <div class="midi-debug">
+          <h2>Debug MIDI</h2>
+          <div class="midi-toolbar">
+            <button type="button" id="midi-connect">Connecter le clavier</button>
+            <select id="midi-port-select" aria-label="Port MIDI">
+              <option value="">Tous les ports</option>
+            </select>
+            <span id="midi-status" class="midi-status" data-status="idle">idle</span>
+          </div>
+          <ul id="midi-log" class="midi-log"></ul>
+        </div>
       </section>
 
       <section id="view-editor" class="view" hidden>

@@ -1,4 +1,6 @@
 import { PdfViewer } from './pdf/pdf-viewer.js';
+import { MidiInput } from './core/midi-input.js';
+import { noteName } from './util/note-names.js';
 
 const views = {
   library: document.getElementById('view-library'),
@@ -51,4 +53,66 @@ if (pdfContainer && pdfFileInput) {
 
   // Exposé pour vérification manuelle en console : pdfViewer.scrollToAnchor(3, 0.5)
   window.__pdfViewer = pdfViewer;
+}
+
+// --- Test manuel P2 : panneau debug MIDI. Sera remplacé par ui/hud.js en P5.
+const MAX_MIDI_LOG_ENTRIES = 16;
+const midiConnectBtn = document.getElementById('midi-connect');
+const midiPortSelect = document.getElementById('midi-port-select');
+const midiStatusEl = document.getElementById('midi-status');
+const midiLogEl = document.getElementById('midi-log');
+
+if (midiConnectBtn && midiPortSelect && midiStatusEl && midiLogEl) {
+  const midiInput = new MidiInput();
+
+  const setStatus = (status) => {
+    midiStatusEl.textContent = status;
+    midiStatusEl.dataset.status = status;
+  };
+
+  const renderPorts = (inputs) => {
+    const previousValue = midiPortSelect.value;
+    midiPortSelect.innerHTML = '<option value="">Tous les ports</option>';
+    for (const input of inputs) {
+      const option = document.createElement('option');
+      option.value = input.id;
+      option.textContent = `${input.name} (${input.state})`;
+      midiPortSelect.appendChild(option);
+    }
+    midiPortSelect.value = previousValue;
+  };
+
+  const logEvent = (kind, detail) => {
+    const label = kind === 'noteon'
+      ? `note-on ${detail.pitch} (${noteName(detail.pitch)}) vel=${detail.velocity} ch=${detail.channel + 1}`
+      : `note-off ${detail.pitch} (${noteName(detail.pitch)}) ch=${detail.channel + 1}`;
+    console.log(`[MIDI] ${label}`);
+
+    const li = document.createElement('li');
+    li.textContent = label;
+    midiLogEl.prepend(li);
+    while (midiLogEl.children.length > MAX_MIDI_LOG_ENTRIES) {
+      midiLogEl.lastChild.remove();
+    }
+  };
+
+  midiInput.addEventListener('noteon', (e) => logEvent('noteon', e.detail));
+  midiInput.addEventListener('noteoff', (e) => logEvent('noteoff', e.detail));
+  midiInput.addEventListener('statechange', (e) => renderPorts(e.detail.inputs));
+  midiInput.addEventListener('error', (e) => console.error('[MIDI]', e.detail.message));
+
+  midiPortSelect.addEventListener('change', () => {
+    midiInput.selectInput(midiPortSelect.value || null);
+  });
+
+  midiConnectBtn.addEventListener('click', async () => {
+    midiConnectBtn.disabled = true;
+    setStatus('requesting');
+    await midiInput.connect();
+    setStatus(midiInput.status);
+    midiConnectBtn.disabled = false;
+  });
+
+  // Exposé pour vérification manuelle en console.
+  window.__midiInput = midiInput;
 }
