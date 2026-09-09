@@ -20,7 +20,7 @@ export default defineConfig({
         // Sans le worker pdf.js (pdf.worker.min-*.mjs, servi comme asset JS séparé), le rendu
         // PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire. Le motif
         // *.mjs le couvre déjà.
-        globPatterns: ['**/*.{js,mjs,css,html,png,svg}'],
+        globPatterns: ['**/*.{js,mjs,css,html,png,svg,woff2}'],
       },
       manifest: {
         name: 'VibecodedPiano',

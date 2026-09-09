@@ -1,4 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Inter auto-hébergée (fichier variable unique, sous-ensemble latin — couvre les accents
+   français) : garantit la police dès le premier chargement hors-ligne, contrairement à un
+   @import Google Fonts qui retombe sur system-ui tant que le réseau n'a pas répondu. Un seul
+   fichier .woff2 sert les 4 graisses déclarées ci-dessous (voir vite.config.js globPatterns
+   pour le précache PWA). */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+}
 
 :root {
   /* Nocturne tokens, adapted to VibecodedPiano. Fonctionnels (succès/erreur) gardés
