@@ -2,34 +2,36 @@
    français) : garantit la police dès le premier chargement hors-ligne, contrairement à un
    @import Google Fonts qui retombe sur system-ui tant que le réseau n'a pas répondu. Un seul
    fichier .woff2 sert les 4 graisses déclarées ci-dessous (voir vite.config.js globPatterns
-   pour le précache PWA). */
+   pour le précache PWA). Chemin relatif (et non préfixé /VibecodedPiano/ en dur) : Vite le
+   résout via son pipeline d'assets, ce qui reste correct quel que soit le `base` de build (site
+   principal ou déploiement de prévisualisation sous un sous-chemin). */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+  src: url('../assets/fonts/inter-variable-latin.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+  src: url('../assets/fonts/inter-variable-latin.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+  src: url('../assets/fonts/inter-variable-latin.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/VibecodedPiano/fonts/inter-variable-latin.woff2') format('woff2');
+  src: url('../assets/fonts/inter-variable-latin.woff2') format('woff2');
 }
 
 :root {
