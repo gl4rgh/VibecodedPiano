@@ -1,10 +1,12 @@
 name: Deploy to GitHub Pages
 
+# Ne se déclenche que sur main : l'environnement "github-pages" (créé automatiquement par
+# GitHub quand Pages est activé) restreint le déploiement à la branche par défaut. Un push sur
+# une autre branche construit et échoue silencieusement au job "deploy" (voir historique Actions).
 on:
   push:
     branches:
       - main
-      - claude/project-readiness-jud77z
   workflow_dispatch:
 
 permissions:
