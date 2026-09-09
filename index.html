@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#121212" />
+    <meta name="theme-color" content="#161826" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="apple-touch-icon" href="/VibecodedPiano/icons/icon-192.png" />
@@ -26,14 +26,17 @@
             MIDI
             <input type="file" id="library-midi-input" accept=".mid,.midi" required />
           </label>
-          <button type="submit" id="library-add-submit">Ajouter</button>
+          <button type="submit" id="library-add-submit">
+            <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-88a8,8,0,0,1-8,8H136v32a8,8,0,0,1-16,0V136H88a8,8,0,0,1,0-16h32V88a8,8,0,0,1,16,0v32h32A8,8,0,0,1,176,128Z"/></svg>
+            Ajouter
+          </button>
         </form>
         <p id="library-add-status" class="library-add-status"></p>
 
         <ul id="library-list" class="library-list"></ul>
 
         <details class="debug-panels">
-          <summary>Réglages</summary>
+          <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Réglages</summary>
           <fieldset class="note-scheme-toggle">
             <legend>Notation des notes</legend>
             <label><input type="radio" name="note-scheme" value="en" checked /> Anglais</label>
@@ -80,10 +83,17 @@
 
       <section id="view-editor" class="view view-editor" hidden>
         <div class="editor-toolbar">
-          <button type="button" id="editor-back">← Bibliothèque</button>
+          <button type="button" id="editor-back">
+            <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+            Bibliothèque
+          </button>
           <span id="editor-title" class="editor-title"></span>
-          <button type="button" id="editor-zoom-out" class="icon-btn" aria-label="Zoom -">−</button>
-          <button type="button" id="editor-zoom-in" class="icon-btn" aria-label="Zoom +">+</button>
+          <button type="button" id="editor-zoom-out" class="icon-btn" aria-label="Zoom -">
+            <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z"/></svg>
+          </button>
+          <button type="button" id="editor-zoom-in" class="icon-btn" aria-label="Zoom +">
+            <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+          </button>
           <span id="editor-autosave" class="editor-autosave"></span>
         </div>
 
@@ -92,37 +102,48 @@
 
           <div class="editor-side">
             <details class="editor-section" open>
-              <summary>Poser une ancre</summary>
+              <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Poser une ancre</summary>
               <div class="editor-anchor-tools">
                 <button type="button" id="editor-mode-select" data-mode="select">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232,120h-8.34A96.14,96.14,0,0,0,136,32.34V24a8,8,0,0,0-16,0v8.34A96.14,96.14,0,0,0,32.34,120H24a8,8,0,0,0,0,16h8.34A96.14,96.14,0,0,0,120,223.66V232a8,8,0,0,0,16,0v-8.34A96.14,96.14,0,0,0,223.66,136H232a8,8,0,0,0,0-16Zm-96,87.6V200a8,8,0,0,0-16,0v7.6A80.15,80.15,0,0,1,48.4,136H56a8,8,0,0,0,0-16H48.4A80.15,80.15,0,0,1,120,48.4V56a8,8,0,0,0,16,0V48.4A80.15,80.15,0,0,1,207.6,120H200a8,8,0,0,0,0,16h7.6A80.15,80.15,0,0,1,136,207.6ZM128,88a40,40,0,1,0,40,40A40,40,0,0,0,128,88Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,152Z"/></svg>
                   1. Sélectionner + cliquer sur le PDF
                 </button>
                 <button type="button" id="editor-mode-capture" data-mode="capture">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
                   2. Mode capture (jouer au clavier)
                 </button>
-                <button type="button" id="editor-anchor-pages">3. Ancre au début de chaque page</button>
+                <button type="button" id="editor-anchor-pages">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M12,111l112,64a8,8,0,0,0,7.94,0l112-64a8,8,0,0,0,0-13.9l-112-64a8,8,0,0,0-7.94,0l-112,64A8,8,0,0,0,12,111ZM128,49.21,223.87,104,128,158.79,32.13,104ZM246.94,140A8,8,0,0,1,244,151L132,215a8,8,0,0,1-7.94,0L12,151A8,8,0,0,1,20,137.05l108,61.74,108-61.74A8,8,0,0,1,246.94,140Z"/></svg>
+                  3. Ancre au début de chaque page
+                </button>
               </div>
               <p id="editor-mode-status" class="editor-mode-status"></p>
             </details>
 
             <details class="editor-section" open>
-              <summary>Timeline MIDI</summary>
+              <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Timeline MIDI</summary>
               <div class="editor-io">
-                <button type="button" id="editor-preview-play">▶ Pré-écouter</button>
+                <button type="button" id="editor-preview-play">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>
+                  <span class="btn-label">Pré-écouter</span>
+                </button>
                 <span class="editor-mode-status">depuis l'événement sélectionné, ou le début</span>
               </div>
               <div id="editor-timeline-container" class="editor-timeline-container"></div>
             </details>
 
             <details class="editor-section" open>
-              <summary>Ancres</summary>
+              <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Ancres</summary>
               <ul id="editor-anchor-list" class="editor-anchor-list"></ul>
             </details>
 
             <details class="editor-section" open>
-              <summary>Clavier &amp; export</summary>
+              <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Clavier &amp; export</summary>
               <div class="editor-io">
-                <button type="button" id="editor-connect-midi">Connecter le clavier</button>
+                <button type="button" id="editor-connect-midi">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
+                  Connecter le clavier
+                </button>
                 <select id="editor-midi-port-select" aria-label="Port MIDI">
                   <option value="">Tous les ports</option>
                 </select>
@@ -130,8 +151,14 @@
               </div>
               <div id="editor-midi-last-note" class="editor-midi-last-note">Aucune note reçue</div>
               <div class="editor-io">
-                <button type="button" id="editor-export">Exporter JSON</button>
-                <button type="button" id="editor-import-trigger">Importer JSON</button>
+                <button type="button" id="editor-export">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></svg>
+                  Exporter JSON
+                </button>
+                <button type="button" id="editor-import-trigger">
+                  <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></svg>
+                  Importer JSON
+                </button>
                 <input type="file" id="editor-import-input" accept="application/json" hidden />
               </div>
             </details>
@@ -139,7 +166,7 @@
             <!-- Surcharge par morceau des réglages globaux : un champ vide signifie "hérite
                  du réglage global" (voir core/settings.js resolveSettings). -->
             <details class="editor-section">
-              <summary>Réglages du morceau</summary>
+              <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Réglages du morceau</summary>
               <div class="settings-grid">
                 <label>
                   Lead
@@ -193,14 +220,35 @@
         <div class="play-overlay">
           <div id="play-hud" class="hud"></div>
           <div class="play-controls">
-            <button type="button" id="play-back" class="icon-btn" aria-label="Retour à la bibliothèque">←</button>
-            <button type="button" id="play-prev-anchor" aria-label="Ancre précédente">◀</button>
-            <button type="button" id="play-reset">Reset</button>
-            <button type="button" id="play-next-anchor" aria-label="Ancre suivante">▶</button>
-            <button type="button" id="play-pause">Pause</button>
-            <button type="button" id="play-recenter">Recentrer</button>
-            <button type="button" id="play-connect-midi">Clavier</button>
-            <button type="button" id="play-diagnostic">Diagnostic</button>
+            <button type="button" id="play-back" class="icon-btn" aria-label="Retour à la bibliothèque">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+            </button>
+            <button type="button" id="play-prev-anchor" class="icon-btn" aria-label="Ancre précédente">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
+            </button>
+            <button type="button" id="play-reset">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z"/></svg>
+              Reset
+            </button>
+            <button type="button" id="play-next-anchor" class="icon-btn" aria-label="Ancre suivante">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+            </button>
+            <button type="button" id="play-pause">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></svg>
+              <span class="btn-label">Pause</span>
+            </button>
+            <button type="button" id="play-recenter">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232,120h-8.34A96.14,96.14,0,0,0,136,32.34V24a8,8,0,0,0-16,0v8.34A96.14,96.14,0,0,0,32.34,120H24a8,8,0,0,0,0,16h8.34A96.14,96.14,0,0,0,120,223.66V232a8,8,0,0,0,16,0v-8.34A96.14,96.14,0,0,0,223.66,136H232a8,8,0,0,0,0-16Zm-96,87.6V200a8,8,0,0,0-16,0v7.6A80.15,80.15,0,0,1,48.4,136H56a8,8,0,0,0,0-16H48.4A80.15,80.15,0,0,1,120,48.4V56a8,8,0,0,0,16,0V48.4A80.15,80.15,0,0,1,207.6,120H200a8,8,0,0,0,0,16h7.6A80.15,80.15,0,0,1,136,207.6ZM128,88a40,40,0,1,0,40,40A40,40,0,0,0,128,88Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,152Z"/></svg>
+              Recentrer
+            </button>
+            <button type="button" id="play-connect-midi">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
+              Clavier
+            </button>
+            <button type="button" id="play-diagnostic">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></svg>
+              Diagnostic
+            </button>
           </div>
           <div id="play-diagnostic-panel" class="play-diagnostic" hidden></div>
         </div>
