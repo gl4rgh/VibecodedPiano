@@ -35,6 +35,13 @@ function clamp(value, min, max) {
  * position — net : aucune dérive (`advanced` reste `false`), seul le `kind` rapporté pour cet
  * appel est `'rewind'` au lieu de `'match'`. À `true`, toutes les notes de l'accord doivent
  * être jouées avant d'avancer (cas 1 de l'algorithme, au pied de la lettre).
+ *
+ * Écart volontaire par rapport à l'ordre littéral des cas 2/3 du plan (avant, PUIS arrière) :
+ * ici on prend la correspondance la plus proche du curseur, quel que soit le sens. Cherché
+ * systématiquement en avant d'abord, une note en retard (leniency d'accord ci-dessus) qui
+ * réapparaît plus loin dans le morceau faisait sauter le curseur à cette occurrence lointaine
+ * au lieu de la corriger juste derrière — reproduit sur une gamme mains ensemble où les deux
+ * mains partagent les mêmes hauteurs à plusieurs octaves. Voir `_findNearest`.
  */
 export class Matcher {
   /**
@@ -95,20 +102,14 @@ export class Matcher {
       return { kind: 'match', cursor: this._cursor, advanced: this._cursor !== cursorBefore };
     }
 
-    // Cas 2 : recherche en avant — note omise, accord roulé, saut.
-    const ahead = this._findAhead(pitch);
-    if (ahead !== -1) {
-      this._jumpTo(ahead, pitch);
-      this._stats.skipped++;
-      return { kind: 'skip', cursor: this._cursor, advanced: this._cursor !== cursorBefore };
-    }
-
-    // Cas 3 : recherche en arrière — reprise d'un passage.
-    const behind = this._findBehind(pitch);
-    if (behind !== -1) {
-      this._jumpTo(behind, pitch);
-      this._stats.rewinds++;
-      return { kind: 'rewind', cursor: this._cursor, advanced: this._cursor !== cursorBefore };
+    // Cas 2/3 : recherche avant ET arrière, on retient la correspondance la PLUS PROCHE du
+    // curseur (pas systématiquement l'avant — voir piège ci-dessous).
+    const found = this._findNearest(pitch);
+    if (found) {
+      this._jumpTo(found.index, pitch);
+      if (found.kind === 'skip') this._stats.skipped++;
+      else this._stats.rewinds++;
+      return { kind: found.kind, cursor: this._cursor, advanced: this._cursor !== cursorBefore };
     }
 
     // Cas 4 : aucune correspondance — fausse note, résonance de pédale, etc. Le curseur ne bouge pas.
@@ -142,6 +143,28 @@ export class Matcher {
       this._cursor = Math.min(this._cursor + 1, this._events.length);
       this._pending = this._pitchSetAt(this._cursor);
     }
+  }
+
+  /**
+   * Cherche `pitch` en avant ET en arrière, retourne la correspondance la plus proche du
+   * curseur (égalité tranchée en faveur de l'avant, pour privilégier la progression). Piège :
+   * chercher l'avant avant l'arrière (ordre littéral de l'algorithme §6.2) casse dès qu'une
+   * hauteur rejouée en retard (leniency d'accord, cf. doc de la classe) réapparaît PLUS LOIN
+   * dans le morceau — un simple décalage de main peut alors faire sauter le curseur à cette
+   * occurrence lointaine au lieu de la corriger juste derrière. Confirmé sur un exercice de
+   * gammes mains ensemble, où les deux mains partagent les mêmes hauteurs à plusieurs octaves.
+   * @param {number} pitch
+   * @returns {{ index:number, kind:'skip'|'rewind' } | null}
+   */
+  _findNearest(pitch) {
+    const ahead = this._findAhead(pitch);
+    const behind = this._findBehind(pitch);
+    if (ahead === -1 && behind === -1) return null;
+    if (ahead === -1) return { index: behind, kind: 'rewind' };
+    if (behind === -1) return { index: ahead, kind: 'skip' };
+    const aheadDist = ahead - this._cursor;
+    const behindDist = this._cursor - behind;
+    return aheadDist <= behindDist ? { index: ahead, kind: 'skip' } : { index: behind, kind: 'rewind' };
   }
 
   _findAhead(pitch) {

@@ -89,6 +89,36 @@ describe('Matcher — accord joué en arpège', () => {
     expect(r4.kind).toBe('match');
     expect(matcher.cursor).toBe(3);
   });
+
+  it('une main légèrement en retard ne fait pas sauter le curseur à une occurrence lointaine de la même hauteur', () => {
+    // Reproduit un cas réel (gamme mains ensemble) : chaque accord associe une hauteur qui
+    // réapparaît nettement plus loin dans le morceau (ici 60, présent au 1er ET au dernier
+    // accord). Si la main en retard est recherchée « en avant » avant « en arrière », elle
+    // matche par erreur l'occurrence lointaine au lieu de se corriger juste derrière.
+    const seq = events(
+      [48, 60],
+      [50, 62],
+      [52, 64],
+      [53, 65],
+      [55, 67],
+      [57, 69],
+      [59, 71],
+      [60, 72],
+    );
+    const matcher = new Matcher(seq);
+
+    matcher.onNoteOn(48); // main gauche du 1er accord -> avance immédiatement, cursor=1
+    const late = matcher.onNoteOn(60); // main droite du 1er accord, jouée en retard
+
+    expect(late.kind).toBe('rewind'); // corrigée juste derrière, pas un saut au dernier accord
+    expect(late.advanced).toBe(false);
+    expect(matcher.cursor).toBe(1);
+
+    // Le morceau continue normalement depuis cette position, sans dérive accumulée.
+    const next = matcher.onNoteOn(50);
+    expect(next.kind).toBe('match');
+    expect(matcher.cursor).toBe(2);
+  });
 });
 
 describe('Matcher — accord incomplet', () => {
