@@ -4,17 +4,10 @@ Suiveur de partition PWA : affiche un PDF de partition et le fait défiler autom
 en suivant les notes jouées sur un clavier MIDI (Web MIDI API), via un fichier MIDI de
 référence et une table d'ancrages posée à la main.
 
-Voir `plan.md` pour l'architecture complète, le modèle de données, les contrats d'interface
-entre modules, l'algorithme de synchronisation et le découpage en phases d'implémentation
-(P0 → P8). Ce fichier n'est **pas** versionné (voir `.gitignore`) : il n'est pas exposé
-publiquement et n'est donc pas présent après un `git clone` — le recopier manuellement sur
-chaque appareil avant de démarrer une session.
-
 ## Travailler depuis plusieurs appareils
 
 Ce repo est la seule source de vérité pour le code — aucun état local persistant en dehors de
-git, à l'exception de `plan.md` (non versionné, voir ci-dessus) qu'il faut recopier soi-même
-sur chaque appareil. Le workflow du code est du git classique :
+git. Le workflow est du git classique :
 
 ```bash
 git clone https://github.com/gl4rgh/VibecodedPiano.git
@@ -24,19 +17,33 @@ git pull          # avant de commencer une session
 git push          # à la fin d'une phase / d'une session
 ```
 
-Règle suivie dans ce projet : **une phase du plan = un commit**. Toujours `git pull` avant de
-démarrer une phase, pour repartir de l'état laissé par la session précédente (peu importe
-l'appareil sur lequel elle a tourné).
-
-Les partitions PDF et fichiers MIDI de travail ne sont **jamais** commités (voir `.gitignore` et
-la §1 de `plan.md`) — ils sont importés depuis le navigateur et stockés en IndexedDB, propre à
-chaque appareil. Un morceau ajouté sur un appareil doit être réimporté sur les autres.
+Les partitions PDF et fichiers MIDI de travail ne sont **jamais** commités (voir `.gitignore`)
+— ils sont importés depuis le navigateur et stockés en IndexedDB, propre à chaque appareil.
+Un morceau ajouté sur un appareil doit être réimporté sur les autres.
 
 ## Statut
 
-Phase actuelle : **P0 — Setup** (voir `plan.md` §7). Le code n'a pas encore démarré.
+Phases terminées : **P0 → P3** (setup, affichage PDF, listener MIDI, parsing du MIDI de
+référence). L'interface actuelle est un harnais de test manuel dans la vue Bibliothèque
+(import PDF, connexion clavier, import MIDI de référence + timeline) — l'UI définitive
+(bibliothèque, éditeur d'ancrages, mode jeu) arrive en P4 et suivantes.
 
-## Développement
+## Tester l'application
+
+L'app est déployée automatiquement sur GitHub Pages à chaque push sur `main` :
+
+**https://gl4rgh.github.io/VibecodedPiano/**
+
+Ouvrir cette URL dans Chrome (ordinateur, tablette ou téléphone) suffit — pas d'installation.
+Web MIDI exige un contexte sécurisé (`https://` ou `localhost`), ce que Pages fournit
+nativement ; c'est donc la façon la plus simple de tester avec un vrai clavier/synthé branché
+en USB.
+
+À la première connexion d'un clavier, le navigateur demande l'autorisation d'accès MIDI —
+l'accepter. Utiliser le bouton « Connecter le clavier » du panneau debug (geste utilisateur
+requis par l'API Web MIDI).
+
+### En développement local
 
 ```bash
 npm install
@@ -45,5 +52,7 @@ npm run build     # build de production → dist/
 npm test          # tests Vitest (logique pure : matcher, parsing MIDI, ancrages)
 ```
 
-> Web MIDI exige un contexte sécurisé (`https://` ou `localhost`). Pour tester depuis une
-> tablette, utiliser le build déployé sur GitHub Pages plutôt que le serveur de dev local.
+Le serveur de dev local (`npm run dev`) tourne en `http://localhost`, un contexte sécurisé lui
+aussi : Web MIDI y fonctionne. Ce qui ne fonctionne pas en local, c'est de tester depuis un
+*autre* appareil sur le même réseau (`--host` expose l'app en `http://<IP>`, non sécurisé) —
+dans ce cas, préférer l'URL GitHub Pages ci-dessus.
