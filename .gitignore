@@ -4,3 +4,4 @@ dist/
 *.mid
 *.midi
 !tests/fixtures/*.mid
+plan.md

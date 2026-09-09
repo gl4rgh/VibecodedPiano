@@ -4,14 +4,17 @@ Suiveur de partition PWA : affiche un PDF de partition et le fait défiler autom
 en suivant les notes jouées sur un clavier MIDI (Web MIDI API), via un fichier MIDI de
 référence et une table d'ancrages posée à la main.
 
-Voir [`plan.md`](./plan.md) pour l'architecture complète, le modèle de données, les contrats
-d'interface entre modules, l'algorithme de synchronisation et le découpage en phases
-d'implémentation (P0 → P8).
+Voir `plan.md` pour l'architecture complète, le modèle de données, les contrats d'interface
+entre modules, l'algorithme de synchronisation et le découpage en phases d'implémentation
+(P0 → P8). Ce fichier n'est **pas** versionné (voir `.gitignore`) : il n'est pas exposé
+publiquement et n'est donc pas présent après un `git clone` — le recopier manuellement sur
+chaque appareil avant de démarrer une session.
 
 ## Travailler depuis plusieurs appareils
 
-Ce repo est la seule source de vérité — aucun état local persistant en dehors de git. Le
-workflow est du git classique :
+Ce repo est la seule source de vérité pour le code — aucun état local persistant en dehors de
+git, à l'exception de `plan.md` (non versionné, voir ci-dessus) qu'il faut recopier soi-même
+sur chaque appareil. Le workflow du code est du git classique :
 
 ```bash
 git clone https://github.com/gl4rgh/VibecodedPiano.git
