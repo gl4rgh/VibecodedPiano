@@ -74,8 +74,12 @@
 
             <div class="editor-io">
               <button type="button" id="editor-connect-midi">Connecter le clavier</button>
+              <select id="editor-midi-port-select" aria-label="Port MIDI">
+                <option value="">Tous les ports</option>
+              </select>
               <span id="editor-midi-status" class="midi-status" data-status="idle">idle</span>
             </div>
+            <div id="editor-midi-last-note" class="editor-midi-last-note">Aucune note reçue</div>
             <div class="editor-io">
               <button type="button" id="editor-export">Exporter JSON</button>
               <button type="button" id="editor-import-trigger">Importer JSON</button>

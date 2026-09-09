@@ -4,7 +4,7 @@ import { locatePoint } from './pdf-geometry.js';
 const RENDER_MARGIN_PAGES = 1;
 const MAX_CANVAS_SIDE = 4096;
 const USER_SCROLLING_TIMEOUT_MS = 4000;
-const MIN_SCALE = 0.15;
+const MIN_SCALE = 0.08;
 const MAX_SCALE = 4;
 const FIT_WIDTH_MARGIN = 0.96;
 

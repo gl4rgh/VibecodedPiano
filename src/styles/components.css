@@ -151,11 +151,14 @@
 
 /* --- Viewer PDF (partagé bibliothèque/éditeur) ---------------------------------------- */
 
-/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique. */
+/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
+   overflow-x: auto (et non hidden) : si la page dépasse la largeur du conteneur (zoom, PDF
+   au format paysage), on doit pouvoir la parcourir horizontalement plutôt que perdre son bord
+   droit sans recours. */
 .pdf-viewer {
   position: relative;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   flex: 1 1 auto;
   min-height: 0;
   background: #0a0a0a;
@@ -449,4 +452,35 @@
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
+}
+
+.editor-io select {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 8px;
+  font-size: 0.8rem;
+  max-width: 160px;
+}
+
+/* Confirmation visuelle qu'une note a bien été reçue, indépendamment du mode actif
+   (sélection/capture) : sans ça, rien à l'écran ne dit que le clavier envoie des notes. */
+.editor-midi-last-note {
+  flex: 0 0 auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.editor-midi-last-note.flash {
+  background: var(--color-accent);
+  color: #06131f;
+  border-color: var(--color-accent);
 }

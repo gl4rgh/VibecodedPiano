@@ -4,6 +4,9 @@ import { MidiInput } from '../core/midi-input.js';
 import { parseReference } from '../core/midi-reference.js';
 import { getPiece, updatePiece } from '../core/store.js';
 import { sortAnchors, upsertAnchor, removeAnchor, exportJson, importJson, sha256Hex } from '../core/anchors.js';
+import { noteName } from '../util/note-names.js';
+
+const NOTE_FLASH_MS = 250;
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
 const CAPTURE_LOOKAHEAD = 8;
@@ -37,7 +40,9 @@ export function mountEditorView(container) {
   const timelineContainer = container.querySelector('#editor-timeline-container');
   const anchorListEl = container.querySelector('#editor-anchor-list');
   const connectMidiBtn = container.querySelector('#editor-connect-midi');
+  const midiPortSelect = container.querySelector('#editor-midi-port-select');
   const midiStatusEl = container.querySelector('#editor-midi-status');
+  const lastNoteEl = container.querySelector('#editor-midi-last-note');
   const exportBtn = container.querySelector('#editor-export');
   const importTriggerBtn = container.querySelector('#editor-import-trigger');
   const importInput = container.querySelector('#editor-import-input');
@@ -54,6 +59,8 @@ export function mountEditorView(container) {
   let captureCursor = -1;
   let capturePending = new Set();
   let saveTimer = null;
+  let noteScheme = 'en';
+  let noteFlashTimer = null;
 
   // --- Placement d'ancre : clic sur le PDF -------------------------------------------------
   pdfContainer.addEventListener('click', (e) => {
@@ -115,11 +122,13 @@ export function mountEditorView(container) {
     scheduleSave();
   });
 
-  // --- Mode 2 : capture au clavier -----------------------------------------------------------
+  // --- MIDI : connexion, choix du port, retour visuel sur chaque note reçue -----------------
   midiInput.addEventListener('noteon', (e) => {
+    showNoteFeedback(e.detail.pitch, e.detail.velocity);
     if (mode !== 'capture' || refEvents.length === 0) return;
     onCaptureNoteOn(e.detail.pitch);
   });
+  midiInput.addEventListener('statechange', (e) => renderMidiPorts(e.detail.inputs));
   midiInput.addEventListener('error', (e) => console.error('[editor] MIDI', e.detail.message));
 
   connectMidiBtn.addEventListener('click', async () => {
@@ -129,6 +138,33 @@ export function mountEditorView(container) {
     setMidiStatus(midiInput.status);
     connectMidiBtn.disabled = false;
   });
+
+  midiPortSelect.addEventListener('change', () => {
+    midiInput.selectInput(midiPortSelect.value || null);
+  });
+
+  function renderMidiPorts(inputs) {
+    const previousValue = midiPortSelect.value;
+    midiPortSelect.innerHTML = '<option value="">Tous les ports</option>';
+    for (const input of inputs) {
+      const option = document.createElement('option');
+      option.value = input.id;
+      option.textContent = `${input.name} (${input.state})`;
+      midiPortSelect.appendChild(option);
+    }
+    midiPortSelect.value = previousValue;
+  }
+
+  /** Confirmation visuelle immédiate qu'une touche a été détectée, quel que soit le mode actif. */
+  function showNoteFeedback(pitch, velocity) {
+    lastNoteEl.textContent = `${noteName(pitch, noteScheme)} (vel=${velocity})`;
+    lastNoteEl.classList.remove('flash');
+    // Forcer un reflow pour rejouer l'animation même sur la même note répétée.
+    void lastNoteEl.offsetWidth;
+    lastNoteEl.classList.add('flash');
+    clearTimeout(noteFlashTimer);
+    noteFlashTimer = setTimeout(() => lastNoteEl.classList.remove('flash'), NOTE_FLASH_MS);
+  }
 
   function onCaptureNoteOn(pitch) {
     if (captureCursor === -1) resetCaptureCursor(0);
@@ -344,6 +380,7 @@ export function mountEditorView(container) {
   }
 
   function setNoteScheme(scheme) {
+    noteScheme = scheme;
     midiTimeline.setNoteScheme(scheme);
   }
 
