@@ -6,6 +6,7 @@ import { getPiece } from '../core/store.js';
 import { sortAnchors, resolveActiveAnchor } from '../core/anchors.js';
 import { Hud } from './hud.js';
 import { ScreenWakeLock } from '../util/wake-lock.js';
+import { noteName } from '../util/note-names.js';
 
 const DEFAULT_LEAD = 4;
 
@@ -13,7 +14,7 @@ const DEFAULT_LEAD = 4;
  * Vue « Mode jeu » : plein écran, PDF seul + HUD discret en surimpression. Câblage
  * noteon -> matcher.onNoteOn -> resolveActiveAnchor -> viewer.scrollToAnchor (plan.md §6.4).
  * @param {HTMLElement} container
- * @returns {{ open: (id:string) => Promise<void>, close: () => void }}
+ * @returns {{ open: (id:string) => Promise<void>, close: () => void, setNoteScheme: (scheme:string) => void }}
  */
 export function mountPlayView(container) {
   const pdfContainer = container.querySelector('#play-pdf-container');
@@ -39,6 +40,7 @@ export function mountPlayView(container) {
   let matcher = null;
   let paused = false;
   let lastAppliedAnchorId = null;
+  let noteScheme = 'en';
 
   midiInput.addEventListener('noteon', (e) => onNoteOn(e.detail.pitch));
   midiInput.addEventListener('statechange', () => hud.setMidiStatus(midiInput.status));
@@ -75,8 +77,13 @@ export function mountPlayView(container) {
 
   recenterBtn.addEventListener('click', () => jumpToCursor({ force: true }));
 
-  /** Note-on -> avance du matcher -> ancre active -> scroll (§6.4). Ignoré pendant la pause. */
+  /**
+   * Note-on -> avance du matcher -> ancre active -> scroll (§6.4). Le flash de la dernière
+   * note reçue s'affiche TOUJOURS, même en pause : ça prouve que l'app entend le clavier même
+   * quand le suivi lui-même est volontairement suspendu.
+   */
   function onNoteOn(pitch) {
+    hud.flashNote(noteName(pitch, noteScheme));
     if (!matcher || paused) return;
     matcher.onNoteOn(pitch);
     refreshHud();
@@ -159,5 +166,9 @@ export function mountPlayView(container) {
     await wakeLock.disable();
   }
 
-  return { open, close };
+  function setNoteScheme(scheme) {
+    noteScheme = scheme;
+  }
+
+  return { open, close, setNoteScheme };
 }

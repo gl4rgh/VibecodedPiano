@@ -31,6 +31,7 @@ document.querySelectorAll('input[name="note-scheme"]').forEach((radio) => {
     if (!radio.checked) return;
     noteScheme = radio.value;
     editorView.setNoteScheme(noteScheme);
+    playView.setNoteScheme(noteScheme);
   });
 });
 

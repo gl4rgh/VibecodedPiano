@@ -54,37 +54,46 @@
           <div id="editor-pdf-container" class="pdf-container"></div>
 
           <div class="editor-side">
-            <div class="editor-anchor-tools">
-              <button type="button" id="editor-mode-select" data-mode="select">
-                1. Sélectionner + cliquer sur le PDF
-              </button>
-              <button type="button" id="editor-mode-capture" data-mode="capture">
-                2. Mode capture (jouer au clavier)
-              </button>
-              <button type="button" id="editor-anchor-pages">3. Ancre au début de chaque page</button>
-            </div>
-            <p id="editor-mode-status" class="editor-mode-status"></p>
+            <details class="editor-section" open>
+              <summary>Poser une ancre</summary>
+              <div class="editor-anchor-tools">
+                <button type="button" id="editor-mode-select" data-mode="select">
+                  1. Sélectionner + cliquer sur le PDF
+                </button>
+                <button type="button" id="editor-mode-capture" data-mode="capture">
+                  2. Mode capture (jouer au clavier)
+                </button>
+                <button type="button" id="editor-anchor-pages">3. Ancre au début de chaque page</button>
+              </div>
+              <p id="editor-mode-status" class="editor-mode-status"></p>
+            </details>
 
-            <div id="editor-timeline-container" class="editor-timeline-container"></div>
+            <details class="editor-section" open>
+              <summary>Timeline MIDI</summary>
+              <div id="editor-timeline-container" class="editor-timeline-container"></div>
+            </details>
 
-            <div class="editor-anchor-list-wrap">
-              <h2>Ancres</h2>
+            <details class="editor-section" open>
+              <summary>Ancres</summary>
               <ul id="editor-anchor-list" class="editor-anchor-list"></ul>
-            </div>
+            </details>
 
-            <div class="editor-io">
-              <button type="button" id="editor-connect-midi">Connecter le clavier</button>
-              <select id="editor-midi-port-select" aria-label="Port MIDI">
-                <option value="">Tous les ports</option>
-              </select>
-              <span id="editor-midi-status" class="midi-status" data-status="idle">idle</span>
-            </div>
-            <div id="editor-midi-last-note" class="editor-midi-last-note">Aucune note reçue</div>
-            <div class="editor-io">
-              <button type="button" id="editor-export">Exporter JSON</button>
-              <button type="button" id="editor-import-trigger">Importer JSON</button>
-              <input type="file" id="editor-import-input" accept="application/json" hidden />
-            </div>
+            <details class="editor-section" open>
+              <summary>Clavier &amp; export</summary>
+              <div class="editor-io">
+                <button type="button" id="editor-connect-midi">Connecter le clavier</button>
+                <select id="editor-midi-port-select" aria-label="Port MIDI">
+                  <option value="">Tous les ports</option>
+                </select>
+                <span id="editor-midi-status" class="midi-status" data-status="idle">idle</span>
+              </div>
+              <div id="editor-midi-last-note" class="editor-midi-last-note">Aucune note reçue</div>
+              <div class="editor-io">
+                <button type="button" id="editor-export">Exporter JSON</button>
+                <button type="button" id="editor-import-trigger">Importer JSON</button>
+                <input type="file" id="editor-import-input" accept="application/json" hidden />
+              </div>
+            </details>
           </div>
         </div>
       </section>
