@@ -11,55 +11,78 @@
   <body>
     <main id="app">
       <section id="view-library" class="view view-library" hidden>
-        <!-- Test manuel P1 : import PDF direct, sans base. Remplacé par la vraie
-             bibliothèque (IndexedDB) en P4 — voir plan.md §7. -->
-        <div class="pdf-toolbar">
-          <input type="file" id="pdf-file-input" accept="application/pdf" />
-          <button type="button" id="pdf-zoom-out" aria-label="Zoom -">−</button>
-          <button type="button" id="pdf-zoom-in" aria-label="Zoom +">+</button>
-        </div>
-        <div id="pdf-container" class="pdf-container"></div>
+        <h1>Bibliothèque</h1>
 
-        <!-- Panneaux de réglages/debug, repliés par défaut pour laisser le maximum
-             de place au viewer PDF. Remplacés par les vraies vues en P4/P5/P6. -->
+        <form id="library-add-form" class="library-add-form">
+          <input type="text" id="library-title-input" placeholder="Titre du morceau" required />
+          <label class="library-file-label">
+            PDF
+            <input type="file" id="library-pdf-input" accept="application/pdf" required />
+          </label>
+          <label class="library-file-label">
+            MIDI
+            <input type="file" id="library-midi-input" accept=".mid,.midi" required />
+          </label>
+          <button type="submit" id="library-add-submit">Ajouter</button>
+        </form>
+        <p id="library-add-status" class="library-add-status"></p>
+
+        <ul id="library-list" class="library-list"></ul>
+
+        <!-- Réglage global provisoire : passera dans core/store.js (réglages) en P6.
+             Affecte le panneau debug MIDI (P2) et la timeline de référence (éditeur). -->
         <details class="debug-panels">
-          <summary>Réglages &amp; debug MIDI</summary>
-
-          <!-- Réglage global provisoire : passera dans core/store.js (réglages) en P6.
-               Affecte le panneau debug MIDI (P2) et la timeline de référence (P3). -->
+          <summary>Réglages</summary>
           <fieldset class="note-scheme-toggle">
             <legend>Notation des notes</legend>
             <label><input type="radio" name="note-scheme" value="en" checked /> Anglais</label>
             <label><input type="radio" name="note-scheme" value="solfege" /> Solfège</label>
           </fieldset>
-
-          <!-- Test manuel P2 : panneau debug MIDI. Le statut et le HUD définitifs
-               arrivent en P5 (ui/hud.js) — voir plan.md §7. -->
-          <div class="midi-debug">
-            <h2>Debug MIDI</h2>
-            <div class="midi-toolbar">
-              <button type="button" id="midi-connect">Connecter le clavier</button>
-              <select id="midi-port-select" aria-label="Port MIDI">
-                <option value="">Tous les ports</option>
-              </select>
-              <span id="midi-status" class="midi-status" data-status="idle">idle</span>
-            </div>
-            <ul id="midi-log" class="midi-log"></ul>
-          </div>
-
-          <!-- Test manuel P3 : parsing du MIDI de référence + timeline. Remplacé par
-               ui/view-editor.js en P4 — voir plan.md §7. -->
-          <div class="midi-ref-debug">
-            <h2>Debug MIDI de référence</h2>
-            <input type="file" id="midi-ref-file-input" accept=".mid,.midi" />
-            <p id="midi-ref-summary" class="midi-ref-summary"></p>
-            <div id="midi-timeline-container"></div>
-          </div>
         </details>
       </section>
 
-      <section id="view-editor" class="view" hidden>
-        <h1>Éditeur d'ancrages</h1>
+      <section id="view-editor" class="view view-editor" hidden>
+        <div class="editor-toolbar">
+          <button type="button" id="editor-back">← Bibliothèque</button>
+          <span id="editor-title" class="editor-title"></span>
+          <button type="button" id="editor-zoom-out" class="icon-btn" aria-label="Zoom -">−</button>
+          <button type="button" id="editor-zoom-in" class="icon-btn" aria-label="Zoom +">+</button>
+          <span id="editor-autosave" class="editor-autosave"></span>
+        </div>
+
+        <div class="editor-split">
+          <div id="editor-pdf-container" class="pdf-container"></div>
+
+          <div class="editor-side">
+            <div class="editor-anchor-tools">
+              <button type="button" id="editor-mode-select" data-mode="select">
+                1. Sélectionner + cliquer sur le PDF
+              </button>
+              <button type="button" id="editor-mode-capture" data-mode="capture">
+                2. Mode capture (jouer au clavier)
+              </button>
+              <button type="button" id="editor-anchor-pages">3. Ancre au début de chaque page</button>
+            </div>
+            <p id="editor-mode-status" class="editor-mode-status"></p>
+
+            <div id="editor-timeline-container" class="editor-timeline-container"></div>
+
+            <div class="editor-anchor-list-wrap">
+              <h2>Ancres</h2>
+              <ul id="editor-anchor-list" class="editor-anchor-list"></ul>
+            </div>
+
+            <div class="editor-io">
+              <button type="button" id="editor-connect-midi">Connecter le clavier</button>
+              <span id="editor-midi-status" class="midi-status" data-status="idle">idle</span>
+            </div>
+            <div class="editor-io">
+              <button type="button" id="editor-export">Exporter JSON</button>
+              <button type="button" id="editor-import-trigger">Importer JSON</button>
+              <input type="file" id="editor-import-input" accept="application/json" hidden />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="view-play" class="view" hidden>

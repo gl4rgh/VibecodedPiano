@@ -23,50 +23,10 @@
   cursor: pointer;
 }
 
-/* Layout de la vue bibliothèque : le viewer PDF prend toute la place disponible,
-   les réglages/panneaux de debug sont repliés en bas (voir <details> dans index.html). */
-.view-library {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-
-.pdf-toolbar {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 6px 8px;
-  flex: 0 0 auto;
-}
-
-.pdf-toolbar button {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  font-size: 1.1rem;
-}
-
-/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
-   flex:1 : le viewer occupe tout l'espace restant une fois la toolbar et les panneaux de
-   debug (repliés par défaut) placés — priorité à la partition, voir .debug-panels. */
-.pdf-viewer {
-  position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1 1 auto;
-  min-height: 0;
-  background: #0a0a0a;
-}
-
 .debug-panels {
-  flex: 0 0 auto;
-  max-height: 40vh;
-  overflow-y: auto;
+  margin-top: 12px;
   border-top: 1px solid var(--color-border);
-  padding: 4px 8px 8px;
+  padding-top: 8px;
 }
 
 .debug-panels summary {
@@ -81,6 +41,126 @@
   margin-bottom: 8px;
 }
 
+/* --- Bibliothèque -------------------------------------------------------------------- */
+
+.library-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+  margin: 8px 0;
+}
+
+.library-add-form input[type='text'] {
+  flex: 1 1 160px;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: inherit;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.library-file-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.library-add-form button {
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-accent);
+  color: #06131f;
+  padding: 0 14px;
+  font-weight: 600;
+}
+
+.library-add-status {
+  min-height: 1.2em;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+}
+
+.library-add-status.error {
+  color: var(--color-danger);
+}
+
+.library-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.library-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.library-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.library-item-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.library-item-actions {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.library-item-actions button {
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: inherit;
+  padding: 0 10px;
+  font-size: 0.85rem;
+}
+
+.library-delete-btn {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.library-empty {
+  color: var(--color-text-dim);
+  font-size: 0.9rem;
+  padding: 12px 0;
+}
+
+/* --- Viewer PDF (partagé bibliothèque/éditeur) ---------------------------------------- */
+
+/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique. */
+.pdf-viewer {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #0a0a0a;
+}
+
 .pdf-page {
   position: relative;
   margin: 12px auto;
@@ -92,33 +172,7 @@
   display: block;
 }
 
-.midi-debug {
-  border-top: 1px solid var(--color-border);
-  padding-top: 8px;
-}
-
-.midi-debug h2 {
-  font-size: 0.95rem;
-  margin: 0 0 8px;
-  color: var(--color-text-dim);
-}
-
-.midi-toolbar {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.midi-toolbar button,
-.midi-toolbar select {
-  height: 36px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: inherit;
-  padding: 0 10px;
-}
+/* --- MIDI (statut partagé, timeline) --------------------------------------------------- */
 
 .midi-status {
   padding: 2px 8px;
@@ -135,21 +189,6 @@
 .midi-status[data-status='denied'],
 .midi-status[data-status='unsupported'] {
   color: var(--color-danger);
-}
-
-.midi-log {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  max-height: 220px;
-  overflow-y: auto;
-  font-family: ui-monospace, monospace;
-  font-size: 0.8rem;
-}
-
-.midi-log li {
-  padding: 2px 0;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .midi-timeline {
@@ -176,11 +215,17 @@
   height: 28px;
   padding: 0 8px;
   border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
 }
 
 .midi-timeline-row.current {
   background: var(--color-accent);
   color: #06131f;
+}
+
+.midi-timeline-row.selected {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
 }
 
 .midi-timeline-index {
@@ -201,4 +246,207 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* --- Éditeur d'ancrages ------------------------------------------------------------------ */
+
+.view-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.editor-toolbar button {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 10px;
+}
+
+.editor-toolbar .icon-btn {
+  width: 36px;
+  padding: 0;
+  font-size: 1.1rem;
+}
+
+.editor-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.editor-autosave {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  min-width: 6em;
+  text-align: right;
+}
+
+.editor-split {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.editor-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 340px;
+  flex: 0 0 340px;
+  min-height: 0;
+  padding: 8px;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+}
+
+@media (max-width: 700px) {
+  .editor-split {
+    flex-direction: column;
+  }
+
+  .editor-side {
+    width: auto;
+    flex: 1 1 auto;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+.editor-anchor-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.editor-anchor-tools button,
+.editor-io button {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 10px;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.editor-anchor-tools button.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #06131f;
+}
+
+.editor-mode-status {
+  flex: 0 0 auto;
+  min-height: 1.1em;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.editor-timeline-container.midi-timeline {
+  flex: 1 1 160px;
+  height: auto;
+  min-height: 140px;
+}
+
+.editor-anchor-list-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 160px;
+  min-height: 0;
+}
+
+.editor-anchor-list-wrap h2 {
+  flex: 0 0 auto;
+  margin: 0 0 4px;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+}
+
+.editor-anchor-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.editor-anchor-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.editor-anchor-jump {
+  flex: 0 0 auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+}
+
+.editor-anchor-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: inherit;
+  padding: 4px 6px;
+  font: inherit;
+}
+
+.editor-anchor-page {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.editor-anchor-delete {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.editor-anchor-empty {
+  padding: 8px 0;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+}
+
+.editor-io {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
 }

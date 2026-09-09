@@ -7,18 +7,23 @@ const OVERSCAN = 8; // lignes de marge de chaque côté de la zone visible
  * Liste virtualisée des RefEvent d'un morceau : seules les lignes visibles (± overscan)
  * existent dans le DOM. Un morceau peut faire plusieurs milliers d'événements — rendu par
  * fenêtre, pas d'innerHTML massif (plan.md §7/P3).
+ *
+ * Émet un CustomEvent 'select' (detail: { index }) au clic sur une ligne — utilisé par
+ * l'éditeur d'ancres (P4) pour le mode « sélectionner un événement puis cliquer sur le PDF ».
  */
-export class MidiTimeline {
+export class MidiTimeline extends EventTarget {
   /**
    * @param {HTMLElement} container
    * @param {{ noteScheme?: 'en'|'solfege' }} [opts]
    */
   constructor(container, opts = {}) {
+    super();
     this.container = container;
     this.container.classList.add('midi-timeline');
 
     this._events = [];
     this._currentIndex = -1;
+    this._selectedIndex = -1;
     this._noteScheme = opts.noteScheme ?? 'en';
     this._rows = new Map(); // index -> HTMLElement
     this._raf = null;
@@ -28,13 +33,16 @@ export class MidiTimeline {
     this.container.appendChild(this._spacer);
 
     this._onScroll = this._onScroll.bind(this);
+    this._onClick = this._onClick.bind(this);
     this.container.addEventListener('scroll', this._onScroll, { passive: true });
+    this.container.addEventListener('click', this._onClick);
   }
 
   /** @param {import('../core/midi-reference.js').RefEvent[]} events */
   setEvents(events) {
     this._events = events;
     this._currentIndex = -1;
+    this._selectedIndex = -1;
     this._spacer.style.height = `${events.length * ROW_HEIGHT}px`;
     this._spacer.innerHTML = '';
     this._rows.clear();
@@ -48,6 +56,23 @@ export class MidiTimeline {
     this._rows.get(index)?.classList.add('current');
   }
 
+  /** Surligne l'événement sélectionné dans l'éditeur d'ancres (P4), distinct du curseur du matcher. */
+  setSelectedIndex(index) {
+    this._rows.get(this._selectedIndex)?.classList.remove('selected');
+    this._selectedIndex = index;
+    this._rows.get(index)?.classList.add('selected');
+    this._ensureVisible(index);
+  }
+
+  _ensureVisible(index) {
+    if (index == null || index < 0 || index >= this._events.length) return;
+    const top = index * ROW_HEIGHT;
+    const bottom = top + ROW_HEIGHT;
+    if (top < this.container.scrollTop || bottom > this.container.scrollTop + this.container.clientHeight) {
+      this.container.scrollTop = top - this.container.clientHeight / 2;
+    }
+  }
+
   /** @param {'en'|'solfege'} scheme */
   setNoteScheme(scheme) {
     if (scheme === this._noteScheme) return;
@@ -59,9 +84,21 @@ export class MidiTimeline {
 
   destroy() {
     this.container.removeEventListener('scroll', this._onScroll);
+    this.container.removeEventListener('click', this._onClick);
     if (this._raf) cancelAnimationFrame(this._raf);
     this.container.innerHTML = '';
     this._rows.clear();
+  }
+
+  _onClick(e) {
+    const row = e.target.closest('.midi-timeline-row');
+    if (!row) return;
+    for (const [index, el] of this._rows) {
+      if (el === row) {
+        this.dispatchEvent(new CustomEvent('select', { detail: { index } }));
+        return;
+      }
+    }
   }
 
   _onScroll() {
@@ -95,6 +132,7 @@ export class MidiTimeline {
       const el = this._buildRow(this._events[i]);
       el.style.top = `${i * ROW_HEIGHT}px`;
       if (i === this._currentIndex) el.classList.add('current');
+      if (i === this._selectedIndex) el.classList.add('selected');
       this._spacer.appendChild(el);
       this._rows.set(i, el);
     }
