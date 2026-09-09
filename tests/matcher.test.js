@@ -287,6 +287,39 @@ describe('Matcher — reset / seekToEvent', () => {
   });
 });
 
+describe('Matcher — accords de plus de deux notes', () => {
+  // Rien dans l'algorithme ne suppose une taille de pending particulière (accords à 2 notes
+  // comme dans l'exemple gamme-de-do) : vérifie explicitement des accords à 4 et 5 notes.
+  it('accord à 4 notes : une main tardive dont la hauteur est réutilisée plus loin se corrige juste derrière', () => {
+    const seq = events(
+      [48, 60, 64, 67],
+      [50, 62, 65, 69],
+      [52, 64, 67, 71],
+      [60, 64, 67, 72], // réutilise 60, 64, 67 du 1er accord
+    );
+    const matcher = new Matcher(seq);
+
+    matcher.onNoteOn(48); // une seule note du 1er accord -> avance (leniency), cursor=1
+    const late = matcher.onNoteOn(60); // reste du même accord, en retard, hauteur réutilisée au 4e
+
+    expect(late.kind).toBe('rewind');
+    expect(late.advanced).toBe(false);
+    expect(matcher.cursor).toBe(1);
+  });
+
+  it('accord à 5 notes avec strictChords=true : toutes les notes sont requises avant d\'avancer', () => {
+    const seq = events([48, 52, 55, 60, 64]);
+    const matcher = new Matcher(seq, { strictChords: true });
+
+    for (const pitch of [48, 52, 55, 60]) {
+      expect(matcher.onNoteOn(pitch).advanced).toBe(false);
+    }
+    const last = matcher.onNoteOn(64);
+    expect(last.advanced).toBe(true);
+    expect(matcher.cursor).toBe(1);
+  });
+});
+
 describe('Matcher — octaveAgnostic', () => {
   it('ignore par défaut : une note à la mauvaise octave ne correspond pas', () => {
     const seq = events(60); // C4
