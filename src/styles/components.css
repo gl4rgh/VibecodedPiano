@@ -41,8 +41,8 @@
   margin-bottom: 8px;
 }
 
-/* Réglages globaux (plan.md §7/P6) : grille responsive, réutilisée aussi pour la surcharge
-   par morceau dans l'éditeur (voir .editor-side .settings-grid). */
+/* Réglages globaux : grille responsive, réutilisée aussi pour la surcharge par morceau
+   dans l'éditeur (voir .editor-side .settings-grid). */
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -200,7 +200,7 @@
 
 /* --- Viewer PDF (partagé bibliothèque/éditeur) ---------------------------------------- */
 
-/* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
+/* Pas de scroll-snap ici, il se battrait avec le scroll programmatique.
    overflow-x: auto (et non hidden) : si la page dépasse la largeur du conteneur (zoom, PDF
    au format paysage), on doit pouvoir la parcourir horizontalement plutôt que perdre son bord
    droit sans recours. */

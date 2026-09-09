@@ -17,9 +17,9 @@ export default defineConfig({
       // le plugin le faire silencieusement.
       injectRegister: false,
       workbox: {
-        // Piège plan.md §8 : sans le worker pdf.js (pdf.worker.min-*.mjs, servi comme asset JS
-        // séparé), le rendu PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire.
-        // Le motif *.mjs le couvre déjà.
+        // Sans le worker pdf.js (pdf.worker.min-*.mjs, servi comme asset JS séparé), le rendu
+        // PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire. Le motif
+        // *.mjs le couvre déjà.
         globPatterns: ['**/*.{js,mjs,css,html,png,svg}'],
       },
       manifest: {

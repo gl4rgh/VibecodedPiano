@@ -15,15 +15,16 @@ const CAPTURE_LOOKAHEAD = 8;
 
 /**
  * Vue « Éditeur d'ancrages » : PDF + timeline MIDI côte à côte. Trois façons de poser une
- * ancre (plan.md §7/P4) :
+ * ancre :
  *   1. sélectionner un événement dans la timeline puis cliquer sur le PDF ;
  *   2. mode capture : jouer les premières notes du passage au clavier, puis cliquer sur le PDF ;
  *   3. bouton « ancre au début de chaque page » (eventIndex estimé, à ajuster).
  * Autosave (debounce 500 ms), export/import JSON.
  *
- * Le mode capture utilise un positionnement de curseur minimal (cas « match »/« skip » de
- * l'algorithme §6.2 uniquement) pour rester pratique en édition, sans réutiliser
- * core/matcher.js — le vrai Matcher (avec reject/rewind) est le sujet de P5.
+ * Le mode capture utilise un positionnement de curseur minimal (avance uniquement si la note
+ * correspond ou se trouve juste en avance) pour rester pratique en édition, sans réutiliser
+ * core/matcher.js — le vrai Matcher gère en plus les reprises en arrière et les fausses notes,
+ * nécessaires en mode jeu mais pas ici.
  *
  * @param {HTMLElement} container
  * @returns {{ open: (id:string) => Promise<void>, close: () => void, setNoteScheme: (scheme:string) => void }}
@@ -104,7 +105,7 @@ export function mountEditorView(container) {
     }
   });
 
-  // --- Pré-écoute WebAudio (plan.md §8/P8) : se repérer à l'oreille en posant des ancres -----
+  // --- Pré-écoute WebAudio : se repérer à l'oreille en posant des ancres ---------------------
   previewPlayBtn.addEventListener('click', () => {
     if (audioPreview.playing) {
       audioPreview.stop();
@@ -316,7 +317,7 @@ export function mountEditorView(container) {
     }, AUTOSAVE_DEBOUNCE_MS);
   }
 
-  // --- Réglages du morceau (surcharge des réglages globaux, plan.md §7/P6) ---------------------
+  // --- Réglages du morceau (surcharge des réglages globaux) ------------------------------------
   function loadPieceSettingsForm() {
     const raw = piece.settings ?? {};
     settingsInputs.lead.value = raw.lead ?? '';

@@ -1,7 +1,7 @@
 import { GlobalWorkerOptions, getDocument as pdfjsGetDocument } from 'pdfjs-dist';
 
-// Piège plan.md §8.2 : chemin du worker calculé via import.meta.url, jamais en dur —
-// un chemin figé casse au build Vite.
+// Chemin du worker calculé via import.meta.url, jamais en dur — un chemin figé casse au
+// build Vite (le nom du fichier contient un hash de contenu).
 GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url,

@@ -57,8 +57,8 @@ export async function sha256Hex(blob) {
 }
 
 /**
- * Format d'export JSON partageable (plan.md §4.4). Async : le hash SHA-256 du midiBlob
- * (crypto.subtle) ne peut pas être calculé de façon synchrone.
+ * Format d'export JSON partageable. Async : le hash SHA-256 du midiBlob (crypto.subtle) ne
+ * peut pas être calculé de façon synchrone.
  * @param {import('./store.js').Piece} piece
  * @returns {Promise<string>}
  */

@@ -4,9 +4,9 @@ import { mountEditorView } from './ui/view-editor.js';
 import { mountPlayView } from './ui/view-play.js';
 import { showBanner } from './ui/toast.js';
 
-// PWA (plan.md §7/P7) : registerType 'autoUpdate' télécharge la mise à jour en tâche de fond,
-// mais n'active le nouveau service worker qu'après confirmation — un reload silencieux au
-// mauvais moment couperait le suivi MIDI en plein morceau.
+// PWA : registerType 'autoUpdate' télécharge la mise à jour en tâche de fond, mais n'active
+// le nouveau service worker qu'après confirmation — un reload silencieux au mauvais moment
+// couperait le suivi MIDI en plein morceau.
 const updateSW = registerSW({
   onNeedRefresh() {
     showBanner('Nouvelle version disponible.', {

@@ -6,10 +6,10 @@ const OVERSCAN = 8; // lignes de marge de chaque côté de la zone visible
 /**
  * Liste virtualisée des RefEvent d'un morceau : seules les lignes visibles (± overscan)
  * existent dans le DOM. Un morceau peut faire plusieurs milliers d'événements — rendu par
- * fenêtre, pas d'innerHTML massif (plan.md §7/P3).
+ * fenêtre, pas d'innerHTML massif.
  *
  * Émet un CustomEvent 'select' (detail: { index }) au clic sur une ligne — utilisé par
- * l'éditeur d'ancres (P4) pour le mode « sélectionner un événement puis cliquer sur le PDF ».
+ * l'éditeur d'ancres pour le mode « sélectionner un événement puis cliquer sur le PDF ».
  */
 export class MidiTimeline extends EventTarget {
   /**
@@ -56,7 +56,7 @@ export class MidiTimeline extends EventTarget {
     this._rows.get(index)?.classList.add('current');
   }
 
-  /** Surligne l'événement sélectionné dans l'éditeur d'ancres (P4), distinct du curseur du matcher. */
+  /** Surligne l'événement sélectionné dans l'éditeur d'ancres, distinct du curseur du matcher. */
   setSelectedIndex(index) {
     this._rows.get(this._selectedIndex)?.classList.remove('selected');
     this._selectedIndex = index;

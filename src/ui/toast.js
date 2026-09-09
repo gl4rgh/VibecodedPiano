@@ -1,8 +1,7 @@
 /**
  * Bandeau de notification persistant (pas d'auto-disparition : un message ignoré doit rester
  * visible plutôt que disparaître sans qu'on l'ait vu). Utilisé pour signaler qu'une nouvelle
- * version de l'app est disponible (plan.md §7/P7) ; réutilisable pour d'autres notifications
- * au besoin.
+ * version de l'app est disponible ; réutilisable pour d'autres notifications au besoin.
  * @param {string} message
  * @param {{ actionLabel?: string, onAction?: () => void }} [opts]
  * @returns {HTMLElement} le bandeau créé (pour le retirer soi-même si besoin)

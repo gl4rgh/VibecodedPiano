@@ -22,26 +22,24 @@ function clamp(value, min, max) {
 
 /**
  * Suit la position dans un morceau à partir de la seule suite de hauteurs jouées — le timing
- * est totalement ignoré. Voir plan.md §6 pour l'algorithme complet (4 cas de `onNoteOn`) et
- * §11 : ce fichier et ses tests doivent être corrects avant tout câblage UI, un bug de sync est
- * difficile à diagnostiquer une fois branché à l'affichage.
+ * est totalement ignoré. Ce fichier et ses tests doivent être fiables avant tout câblage UI :
+ * un bug de synchro est difficile à diagnostiquer une fois branché à l'affichage.
  *
  * `strictChords` (défaut false) : à false, jouer UNE SEULE note d'un accord suffit à faire
  * avancer le curseur au-delà de cet événement — tolère les accords incomplets ou joués en
- * arpège (plan.md §9). Limite connue et acceptée : si une autre note du même accord est jouée
- * juste après cette avance, elle est réévaluée contre l'événement suivant ; si elle ne s'y
- * trouve pas, une recherche arrière (`rewind`) la retrouve dans l'accord qu'on vient de
- * quitter, puis la même règle de complétion immédiate renvoie aussitôt le curseur à sa
- * position — net : aucune dérive (`advanced` reste `false`), seul le `kind` rapporté pour cet
- * appel est `'rewind'` au lieu de `'match'`. À `true`, toutes les notes de l'accord doivent
- * être jouées avant d'avancer (cas 1 de l'algorithme, au pied de la lettre).
+ * arpège. Limite connue et acceptée : si une autre note du même accord est jouée juste après
+ * cette avance, elle est réévaluée contre l'événement suivant ; si elle ne s'y trouve pas, une
+ * recherche arrière (`rewind`) la retrouve dans l'accord qu'on vient de quitter, puis la même
+ * règle de complétion immédiate renvoie aussitôt le curseur à sa position — net : aucune
+ * dérive (`advanced` reste `false`), seul le `kind` rapporté pour cet appel est `'rewind'` au
+ * lieu de `'match'`. À `true`, toutes les notes de l'accord doivent être jouées avant d'avancer.
  *
- * Écart volontaire par rapport à l'ordre littéral des cas 2/3 du plan (avant, PUIS arrière) :
- * ici on prend la correspondance la plus proche du curseur, quel que soit le sens. Cherché
- * systématiquement en avant d'abord, une note en retard (leniency d'accord ci-dessus) qui
- * réapparaît plus loin dans le morceau faisait sauter le curseur à cette occurrence lointaine
- * au lieu de la corriger juste derrière — reproduit sur une gamme mains ensemble où les deux
- * mains partagent les mêmes hauteurs à plusieurs octaves. Voir `_findNearest`.
+ * La recherche d'une note absente de l'événement courant se fait en avant ET en arrière, et
+ * retient la correspondance la plus proche du curseur plutôt que de toujours privilégier
+ * l'avant : chercher systématiquement en avant d'abord, une note en retard (leniency d'accord
+ * ci-dessus) qui réapparaît plus loin dans le morceau faisait sauter le curseur à cette
+ * occurrence lointaine au lieu de la corriger juste derrière — reproduit sur une gamme mains
+ * ensemble où les deux mains partagent les mêmes hauteurs à plusieurs octaves. Voir `_findNearest`.
  */
 export class Matcher {
   /**
@@ -103,7 +101,7 @@ export class Matcher {
     }
 
     // Cas 2/3 : recherche avant ET arrière, on retient la correspondance la PLUS PROCHE du
-    // curseur (pas systématiquement l'avant — voir piège ci-dessous).
+    // curseur (pas systématiquement l'avant — voir _findNearest ci-dessous).
     const found = this._findNearest(pitch);
     if (found) {
       this._jumpTo(found.index, pitch);
@@ -147,12 +145,12 @@ export class Matcher {
 
   /**
    * Cherche `pitch` en avant ET en arrière, retourne la correspondance la plus proche du
-   * curseur (égalité tranchée en faveur de l'avant, pour privilégier la progression). Piège :
-   * chercher l'avant avant l'arrière (ordre littéral de l'algorithme §6.2) casse dès qu'une
-   * hauteur rejouée en retard (leniency d'accord, cf. doc de la classe) réapparaît PLUS LOIN
-   * dans le morceau — un simple décalage de main peut alors faire sauter le curseur à cette
-   * occurrence lointaine au lieu de la corriger juste derrière. Confirmé sur un exercice de
-   * gammes mains ensemble, où les deux mains partagent les mêmes hauteurs à plusieurs octaves.
+   * curseur (égalité tranchée en faveur de l'avant, pour privilégier la progression). Toujours
+   * chercher l'avant avant l'arrière casse dès qu'une hauteur rejouée en retard (leniency
+   * d'accord, cf. doc de la classe) réapparaît PLUS LOIN dans le morceau — un simple décalage
+   * de main peut alors faire sauter le curseur à cette occurrence lointaine au lieu de la
+   * corriger juste derrière. Confirmé sur un exercice de gammes mains ensemble, où les deux
+   * mains partagent les mêmes hauteurs à plusieurs octaves.
    * @param {number} pitch
    * @returns {{ index:number, kind:'skip'|'rewind' } | null}
    */

@@ -15,7 +15,6 @@ function clamp(value, min, max) {
 /**
  * Rendu d'un PDF en colonne verticale continue, avec virtualisation des pages
  * (seules les pages visibles ± RENDER_MARGIN_PAGES gardent un canvas peuplé).
- * Voir plan.md §5 pour le contrat et §7/P1 pour les critères d'acceptation.
  */
 export class PdfViewer {
   /**
@@ -61,7 +60,7 @@ export class PdfViewer {
 
   /**
    * Met à jour les réglages consultés par `load()`/les gestes utilisateur, sans recréer le
-   * viewer (utile quand on rouvre un morceau différent avec sa propre surcharge — plan.md §7/P6).
+   * viewer (utile quand on rouvre un morceau différent avec sa propre surcharge de réglages).
    * @param {{ userScrollingTimeoutMs?: number, defaultZoom?: number|null }} opts
    */
   configure(opts = {}) {
@@ -124,8 +123,8 @@ export class PdfViewer {
     if ('onscrollend' in this.container) {
       this.container.addEventListener('scrollend', this._onScrollEnd, { once: true });
     } else {
-      // Piège plan.md §8.7 : le scroll programmatique émet aussi des événements 'scroll',
-      // qu'il ne faut pas confondre avec un scroll utilisateur — d'où ce drapeau temporisé.
+      // Le scroll programmatique émet aussi des événements 'scroll', qu'il ne faut pas
+      // confondre avec un scroll utilisateur — d'où ce drapeau temporisé.
       this._programmaticScrollTimer = setTimeout(this._onScrollEnd, smooth ? 500 : 50);
     }
   }
@@ -275,8 +274,9 @@ export class PdfViewer {
   async _renderPage(entry) {
     if (entry.rendered || entry.renderTask) return;
 
-    // Résolution : scale * min(devicePixelRatio, 2), canvas plafonné à MAX_CANVAS_SIDE
-    // (plan.md §7/P1 et piège §8.4 — indispensable pour la mémoire sur Android).
+    // Résolution : scale * min(devicePixelRatio, 2), canvas plafonné à MAX_CANVAS_SIDE —
+    // indispensable pour la mémoire sur Android (un PDF de plusieurs pages en pleine
+    // résolution DPR peut faire planter l'onglet sans cette limite).
     const outputScale = Math.min(window.devicePixelRatio || 1, 2);
     let pixelWidth = Math.floor(entry.viewport.width * outputScale);
     let pixelHeight = Math.floor(entry.viewport.height * outputScale);

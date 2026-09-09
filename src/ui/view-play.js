@@ -11,7 +11,7 @@ import { resolveSettings } from '../core/settings.js';
 
 /**
  * Vue « Mode jeu » : plein écran, PDF seul + HUD discret en surimpression. Câblage
- * noteon -> matcher.onNoteOn -> resolveActiveAnchor -> viewer.scrollToAnchor (plan.md §6.4).
+ * noteon -> matcher.onNoteOn -> resolveActiveAnchor -> viewer.scrollToAnchor.
  * @param {HTMLElement} container
  * @returns {{ open: (id:string) => Promise<void>, close: () => void, setNoteScheme: (scheme:string) => void }}
  */
@@ -80,8 +80,8 @@ export function mountPlayView(container) {
 
   recenterBtn.addEventListener('click', () => jumpToCursor({ force: true }));
 
-  // --- Mode diagnostic (plan.md §7/P6) : affiche kind/stats en temps réel pour régler
-  // lookahead sur un vrai morceau, sans encombrer le HUD normal ("discret" par défaut). ---
+  // --- Mode diagnostic : affiche kind/stats en temps réel pour régler lookahead sur un vrai
+  // morceau, sans encombrer le HUD normal ("discret" par défaut). ---------------------------
   diagnosticBtn.addEventListener('click', () => {
     diagnosticOn = !diagnosticOn;
     diagnosticBtn.classList.toggle('active', diagnosticOn);
@@ -99,7 +99,7 @@ export function mountPlayView(container) {
   }
 
   /**
-   * Note-on -> avance du matcher -> ancre active -> scroll (§6.4). Le flash de la dernière
+   * Note-on -> avance du matcher -> ancre active -> scroll. Le flash de la dernière
    * note reçue s'affiche TOUJOURS, même en pause : ça prouve que l'app entend le clavier même
    * quand le suivi lui-même est volontairement suspendu.
    */

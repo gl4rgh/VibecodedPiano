@@ -12,7 +12,7 @@ const NOTE_OFF = 0x80;
 /**
  * Accès Web MIDI en entrée : connexion, liste des ports, sélection, hot-plug.
  * Émet (CustomEvent) : 'noteon' {pitch,velocity,channel,time}, 'noteoff' {pitch,channel,time},
- * 'statechange' {inputs}, 'error' {message}. Voir plan.md §5 pour le contrat complet.
+ * 'statechange' {inputs}, 'error' {message}.
  */
 export class MidiInput extends EventTarget {
   constructor() {
@@ -30,7 +30,8 @@ export class MidiInput extends EventTarget {
     return this._status;
   }
 
-  /** Demande l'accès Web MIDI. À appeler depuis un geste utilisateur (piège plan.md §8.6). */
+  /** Demande l'accès Web MIDI. À appeler depuis un geste utilisateur : certains navigateurs
+   * refusent silencieusement la permission sinon. */
   async connect() {
     if (typeof navigator === 'undefined' || !navigator.requestMIDIAccess) {
       this._status = 'unsupported';
@@ -111,7 +112,7 @@ export class MidiInput extends EventTarget {
     const pitch = event.data[1];
     const velocity = event.data[2];
 
-    // Piège plan.md §8.1 : note-on vélocité 0 = note-off (le CDP-360 l'utilise).
+    // note-on avec vélocité 0 = note-off : convention utilisée par certains claviers MIDI.
     if (command === NOTE_ON && velocity > 0) {
       this.dispatchEvent(new CustomEvent('noteon', {
         detail: { pitch, velocity, channel, time: event.timeStamp },

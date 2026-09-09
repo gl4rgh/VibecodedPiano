@@ -1,5 +1,5 @@
 /**
- * Pré-écoute WebAudio du MIDI de référence (plan.md §8/P8) : synthèse simple par oscillateur,
+ * Pré-écoute WebAudio du MIDI de référence : synthèse simple par oscillateur,
  * pour se repérer à l'oreille en posant des ancres — pas un rendu fidèle du morceau (les
  * RefEvent n'ont pas de durée par note, seulement un instant de départ ; la durée jouée est
  * dérivée de l'écart avec l'événement suivant).

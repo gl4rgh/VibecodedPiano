@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} Settings
- * @property {number}       lead             pré-roll de l'ancre, en événements (plan.md §6.3)
+ * @property {number}       lead             pré-roll de l'ancre, en événements
  * @property {number}       lookahead        fenêtre de recherche avant du matcher
  * @property {number}       lookbehind       fenêtre de recherche arrière du matcher
  * @property {number}       chordWindowMs    fenêtre de regroupement en accords (parseReference)

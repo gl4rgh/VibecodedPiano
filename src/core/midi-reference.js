@@ -15,7 +15,6 @@ const PERCUSSION_CHANNEL = 9;
 /**
  * Parse un MIDI de référence : fusionne les notes de toutes les pistes (hors percussions),
  * les trie par ticks puis pitch, et les regroupe en RefEvent (accords) selon chordWindowMs.
- * Voir plan.md §5 et §6.
  * @param {ArrayBuffer} buf
  * @param {{chordWindowMs?:number}} [opts]
  * @returns {{ events: RefEvent[], ppq:number, durationSec:number, trackCount:number }}
