@@ -21,6 +21,11 @@ export default defineConfig({
         // PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire. Le motif
         // *.mjs le couvre déjà.
         globPatterns: ['**/*.{js,mjs,css,html,png,svg}'],
+        // Sans ça, le NavigationRoute par défaut de ce service worker (scope /VibecodedPiano/)
+        // intercepte AUSSI les navigations vers /VibecodedPiano/nouvelle-ui/ (prévisualisation de
+        // la refonte UI déployée à côté, voir index.html) et leur sert le index.html de ce site
+        // au lieu du sien — page cassée après la première visite du site principal.
+        navigateFallbackDenylist: [/\/nouvelle-ui\//],
       },
       manifest: {
         name: 'VibecodedPiano',
