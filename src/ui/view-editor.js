@@ -13,6 +13,13 @@ const NOTE_FLASH_MS = 250;
 const AUTOSAVE_DEBOUNCE_MS = 500;
 const CAPTURE_LOOKAHEAD = 8;
 
+const ICON_PLAY =
+  '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>';
+const ICON_STOP =
+  '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,160H56V56H200V200Z"/></svg>';
+const ICON_X =
+  '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
+
 /**
  * Vue « Éditeur d'ancrages » : PDF + timeline MIDI côte à côte. Trois façons de poser une
  * ancre :
@@ -114,7 +121,7 @@ export function mountEditorView(container) {
     }
     if (refEvents.length === 0) return;
     const fromIndex = selectedEventIndex >= 0 ? selectedEventIndex : 0;
-    previewPlayBtn.textContent = '■ Arrêter';
+    previewPlayBtn.innerHTML = `${ICON_STOP}<span class="btn-label">Arrêter</span>`;
     audioPreview.play(refEvents, fromIndex, {
       onEventStart: (i) => midiTimeline.setCurrentIndex(i),
       onEnd: resetPreviewButton,
@@ -122,7 +129,7 @@ export function mountEditorView(container) {
   });
 
   function resetPreviewButton() {
-    previewPlayBtn.textContent = '▶ Pré-écouter';
+    previewPlayBtn.innerHTML = `${ICON_PLAY}<span class="btn-label">Pré-écouter</span>`;
     midiTimeline.setCurrentIndex(-1);
   }
 
@@ -279,7 +286,7 @@ export function mountEditorView(container) {
       const deleteBtn = document.createElement('button');
       deleteBtn.type = 'button';
       deleteBtn.className = 'editor-anchor-delete';
-      deleteBtn.textContent = '✕';
+      deleteBtn.innerHTML = ICON_X;
       deleteBtn.setAttribute('aria-label', "Supprimer l'ancre");
       deleteBtn.addEventListener('click', () => {
         piece = { ...piece, anchors: removeAnchor(piece.anchors, anchor.id) };
