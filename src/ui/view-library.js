@@ -44,6 +44,16 @@ export function mountLibraryView(container) {
       const actions = document.createElement('div');
       actions.className = 'library-item-actions';
 
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'library-play-btn';
+      playBtn.textContent = 'Jouer';
+      playBtn.disabled = piece.anchors.length === 0;
+      playBtn.title = piece.anchors.length === 0 ? "Pose d'abord des ancres dans l'éditeur" : '';
+      playBtn.addEventListener('click', () => {
+        location.hash = `#/play/${piece.id}`;
+      });
+
       const openBtn = document.createElement('button');
       openBtn.type = 'button';
       openBtn.textContent = 'Ouvrir';
@@ -61,7 +71,7 @@ export function mountLibraryView(container) {
         await refresh();
       });
 
-      actions.append(openBtn, deleteBtn);
+      actions.append(playBtn, openBtn, deleteBtn);
       li.append(info, actions);
       listEl.appendChild(li);
     }

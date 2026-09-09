@@ -39,6 +39,14 @@ body {
   touch-action: pan-y;
 }
 
+/* Piège : une règle de vue qui pose `display` (ex. .view-editor { display: flex }) l'emporte
+   sinon sur `[hidden]` (même spécificité, origine "auteur" > feuille par défaut du navigateur)
+   et la vue reste en layout — donc mesurable, redimensionnée par son ResizeObserver, etc. —
+   même masquée. Cette règle regagne systématiquement la priorité quand `hidden` est posé. */
+.view[hidden] {
+  display: none;
+}
+
 button {
   font: inherit;
   color: inherit;

@@ -143,6 +143,21 @@
   border-color: var(--color-danger);
 }
 
+.library-play-btn {
+  color: #06131f;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+
+.library-play-btn:disabled {
+  color: var(--color-text-dim);
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  font-weight: normal;
+  cursor: not-allowed;
+}
+
 .library-empty {
   color: var(--color-text-dim);
   font-size: 0.9rem;
@@ -483,4 +498,95 @@
   background: var(--color-accent);
   color: #06131f;
   border-color: var(--color-accent);
+}
+
+/* --- Mode jeu ---------------------------------------------------------------------------- */
+
+.view-play {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view-play .pdf-viewer {
+  position: absolute;
+  inset: 0;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(10, 10, 10, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.hud-midi-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-text-dim);
+  display: inline-block;
+}
+
+.hud-midi-dot[data-status='ready'] {
+  background: #6fdc8c;
+}
+
+.hud-midi-dot[data-status='denied'],
+.hud-midi-dot[data-status='unsupported'] {
+  background: var(--color-danger);
+}
+
+.hud-anchor {
+  color: var(--color-text);
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.play-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.play-controls button {
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: inherit;
+  padding: 0 8px;
+  font-size: 0.8rem;
+}
+
+.play-controls .icon-btn {
+  width: 32px;
+  padding: 0;
+}
+
+.play-controls button.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #06131f;
 }

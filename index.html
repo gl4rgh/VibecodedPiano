@@ -89,8 +89,21 @@
         </div>
       </section>
 
-      <section id="view-play" class="view" hidden>
-        <h1>Mode jeu</h1>
+      <section id="view-play" class="view view-play" hidden>
+        <div id="play-pdf-container" class="pdf-container"></div>
+
+        <div class="play-overlay">
+          <div id="play-hud" class="hud"></div>
+          <div class="play-controls">
+            <button type="button" id="play-back" class="icon-btn" aria-label="Retour à la bibliothèque">←</button>
+            <button type="button" id="play-prev-anchor" aria-label="Ancre précédente">◀</button>
+            <button type="button" id="play-reset">Reset</button>
+            <button type="button" id="play-next-anchor" aria-label="Ancre suivante">▶</button>
+            <button type="button" id="play-pause">Pause</button>
+            <button type="button" id="play-recenter">Recentrer</button>
+            <button type="button" id="play-connect-midi">Clavier</button>
+          </div>
+        </div>
       </section>
     </main>
     <script type="module" src="/src/main.js"></script>

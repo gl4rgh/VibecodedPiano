@@ -1,5 +1,6 @@
 import { mountLibraryView } from './ui/view-library.js';
 import { mountEditorView } from './ui/view-editor.js';
+import { mountPlayView } from './ui/view-play.js';
 
 const views = {
   library: document.getElementById('view-library'),
@@ -11,6 +12,7 @@ const views = {
  * Découpe le hash courant en { name, params }.
  * '#/library'      -> { name: 'library', params: [] }
  * '#/editor/abc'   -> { name: 'editor', params: ['abc'] }
+ * '#/play/abc'     -> { name: 'play', params: ['abc'] }
  * ''                -> { name: 'library', params: [] }  (route par défaut)
  * @returns {{ name: string, params: string[] }}
  */
@@ -34,21 +36,36 @@ document.querySelectorAll('input[name="note-scheme"]').forEach((radio) => {
 
 const libraryView = mountLibraryView(views.library);
 const editorView = mountEditorView(views.editor);
+const playView = mountPlayView(views.play);
 
 let currentRoute = null;
 
 function render() {
   const { name, params } = parseRoute();
+  const previous = currentRoute;
+
   for (const [viewName, el] of Object.entries(views)) {
     el.hidden = viewName !== name;
+  }
+
+  if (previous?.name === 'editor' && name !== 'editor') {
+    editorView.close();
+  }
+  if (previous?.name === 'play' && name !== 'play') {
+    playView.close();
   }
 
   if (name === 'library') {
     libraryView.refresh();
   } else if (name === 'editor') {
     const id = params[0];
-    if (currentRoute?.name !== 'editor' || currentRoute.params[0] !== id) {
+    if (previous?.name !== 'editor' || previous.params[0] !== id) {
       editorView.open(id);
+    }
+  } else if (name === 'play') {
+    const id = params[0];
+    if (previous?.name !== 'play' || previous.params[0] !== id) {
+      playView.open(id);
     }
   }
 
