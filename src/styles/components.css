@@ -23,11 +23,21 @@
   cursor: pointer;
 }
 
+/* Layout de la vue bibliothèque : le viewer PDF prend toute la place disponible,
+   les réglages/panneaux de debug sont repliés en bas (voir <details> dans index.html). */
+.view-library {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
 .pdf-toolbar {
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 8px;
+  flex: 0 0 auto;
 }
 
 .pdf-toolbar button {
@@ -40,13 +50,35 @@
 }
 
 /* Piège plan.md §8.8 : pas de scroll-snap ici, il se battrait avec le scroll programmatique.
-   Hauteur fixe (et non 100%) : cette vue empile plusieurs panneaux de test manuel tant que
-   ui/view-library.js (P4) n'a pas remplacé ce harnais provisoire. */
+   flex:1 : le viewer occupe tout l'espace restant une fois la toolbar et les panneaux de
+   debug (repliés par défaut) placés — priorité à la partition, voir .debug-panels. */
 .pdf-viewer {
   position: relative;
   overflow-y: auto;
-  height: 45vh;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
   background: #0a0a0a;
+}
+
+.debug-panels {
+  flex: 0 0 auto;
+  max-height: 40vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-border);
+  padding: 4px 8px 8px;
+}
+
+.debug-panels summary {
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--color-text-dim);
+  font-size: 0.85rem;
+}
+
+.debug-panels[open] summary {
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 8px;
 }
 
 .pdf-page {
