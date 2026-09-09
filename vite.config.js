@@ -31,8 +31,9 @@ export default defineConfig({
         scope: '/VibecodedPiano/',
         display: 'standalone',
         orientation: 'any',
-        background_color: '#121212',
-        theme_color: '#121212',
+        // Palette Nocturne (refonte cosmétique) — cohérence avec base.css --color-bg/--color-accent.
+        background_color: '#161826',
+        theme_color: '#161826',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
