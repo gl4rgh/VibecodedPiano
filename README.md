@@ -1,4 +1,4 @@
-# VibecodedPiano — v1.0
+# VibecodedPiano — v1.1
 
 **Le problème que ça résout** : quand on joue du piano avec une partition PDF sous les yeux, il
 faut s'arrêter pour tourner la page (ou scroller) — ce qui casse le jeu. VibecodedPiano écoute
