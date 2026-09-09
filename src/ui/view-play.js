@@ -9,6 +9,11 @@ import { ScreenWakeLock } from '../util/wake-lock.js';
 import { noteName } from '../util/note-names.js';
 import { resolveSettings } from '../core/settings.js';
 
+const ICON_PAUSE =
+  '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></svg>';
+const ICON_PLAY =
+  '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>';
+
 /**
  * Vue « Mode jeu » : plein écran, PDF seul + HUD discret en surimpression. Câblage
  * noteon -> matcher.onNoteOn -> resolveActiveAnchor -> viewer.scrollToAnchor.
@@ -75,7 +80,9 @@ export function mountPlayView(container) {
   pauseBtn.addEventListener('click', () => {
     paused = !paused;
     pauseBtn.classList.toggle('active', paused);
-    pauseBtn.textContent = paused ? 'Reprendre' : 'Pause';
+    pauseBtn.innerHTML = paused
+      ? `${ICON_PLAY}<span class="btn-label">Reprendre</span>`
+      : `${ICON_PAUSE}<span class="btn-label">Pause</span>`;
   });
 
   recenterBtn.addEventListener('click', () => jumpToCursor({ force: true }));
@@ -165,7 +172,7 @@ export function mountPlayView(container) {
     lastAppliedAnchorId = null;
     paused = false;
     pauseBtn.classList.remove('active');
-    pauseBtn.textContent = 'Pause';
+    pauseBtn.innerHTML = `${ICON_PAUSE}<span class="btn-label">Pause</span>`;
     diagnosticPanelEl.hidden = !diagnosticOn;
 
     resolvedSettings = resolveSettings(await getGlobalSettings(), piece.settings);
