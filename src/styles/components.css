@@ -669,3 +669,50 @@
 .play-diagnostic[data-kind='reject'] {
   color: var(--color-danger);
 }
+
+/* --- Bandeau de notification (ui/toast.js) ------------------------------------------------ */
+
+.toast-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-accent);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.toast-message {
+  font-size: 0.85rem;
+}
+
+.toast-banner button {
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: inherit;
+  padding: 0 10px;
+  font-size: 0.8rem;
+  flex: 0 0 auto;
+}
+
+.toast-action {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #06131f;
+  font-weight: 600;
+}
+
+.toast-close {
+  width: 32px;
+  padding: 0;
+}

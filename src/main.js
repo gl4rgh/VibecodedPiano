@@ -1,6 +1,20 @@
+import { registerSW } from 'virtual:pwa-register';
 import { mountLibraryView } from './ui/view-library.js';
 import { mountEditorView } from './ui/view-editor.js';
 import { mountPlayView } from './ui/view-play.js';
+import { showBanner } from './ui/toast.js';
+
+// PWA (plan.md §7/P7) : registerType 'autoUpdate' télécharge la mise à jour en tâche de fond,
+// mais n'active le nouveau service worker qu'après confirmation — un reload silencieux au
+// mauvais moment couperait le suivi MIDI en plein morceau.
+const updateSW = registerSW({
+  onNeedRefresh() {
+    showBanner('Nouvelle version disponible.', {
+      actionLabel: 'Recharger',
+      onAction: () => updateSW(true),
+    });
+  },
+});
 
 const views = {
   library: document.getElementById('view-library'),
@@ -22,8 +36,8 @@ function parseRoute() {
   return { name: name && views[name] ? name : 'library', params };
 }
 
-// --- Réglage provisoire de notation des notes (anglais/solfège). Deviendra un vrai réglage
-// persisté (core/store.js) en P6.
+// --- Réglage de notation des notes (anglais/solfège) : partagé entre les vues, pas encore
+// persisté (n'est pas dans core/settings.js — seulement les réglages du matcher/viewer le sont).
 let noteScheme = 'en';
 
 document.querySelectorAll('input[name="note-scheme"]').forEach((radio) => {
