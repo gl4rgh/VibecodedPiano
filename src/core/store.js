@@ -19,7 +19,28 @@ const SETTINGS_STORE = 'settings';
  * @property {number}   updatedAt
  */
 
+const GLOBAL_SETTINGS_KEY = 'globalSettings';
+
 let dbPromise = null;
+
+/**
+ * IndexedDB lève un DOMException 'QuotaExceededError' (nommage variable selon les navigateurs)
+ * quand le quota de stockage est dépassé — typiquement en ajoutant un gros PDF/MIDI. Le
+ * message brut n'est pas actionnable pour l'utilisateur ; on le remplace par un message clair
+ * plutôt que de laisser remonter une DOMException opaque jusqu'à l'UI.
+ * @param {unknown} err
+ */
+function rethrowStorageError(err) {
+  const isQuotaError =
+    err instanceof DOMException && (err.name === 'QuotaExceededError' || err.code === 22);
+  if (isQuotaError) {
+    throw new Error(
+      "Stockage plein : le navigateur n'a plus de place pour sauvegarder ce morceau. " +
+        'Supprime un morceau existant ou libère de l\'espace sur cet appareil.',
+    );
+  }
+  throw err;
+}
 
 function getDb() {
   if (!dbPromise) {
@@ -57,7 +78,11 @@ export async function createPiece(data) {
     updatedAt: now,
   };
   const db = await getDb();
-  await db.put(PIECES_STORE, piece);
+  try {
+    await db.put(PIECES_STORE, piece);
+  } catch (err) {
+    rethrowStorageError(err);
+  }
   return piece;
 }
 
@@ -84,7 +109,11 @@ export async function updatePiece(id, patch) {
   const existing = await db.get(PIECES_STORE, id);
   if (!existing) throw new Error(`Piece introuvable : ${id}`);
   const updated = { ...existing, ...patch, id, updatedAt: Date.now() };
-  await db.put(PIECES_STORE, updated);
+  try {
+    await db.put(PIECES_STORE, updated);
+  } catch (err) {
+    rethrowStorageError(err);
+  }
   return updated;
 }
 
@@ -105,4 +134,14 @@ export async function getSetting(key) {
 export async function setSetting(key, value) {
   const db = await getDb();
   await db.put(SETTINGS_STORE, { key, value });
+}
+
+/** @returns {Promise<Partial<import('./settings.js').Settings>>} */
+export async function getGlobalSettings() {
+  return (await getSetting(GLOBAL_SETTINGS_KEY)) ?? {};
+}
+
+/** @param {Partial<import('./settings.js').Settings>} settings */
+export async function setGlobalSettings(settings) {
+  await setSetting(GLOBAL_SETTINGS_KEY, settings);
 }

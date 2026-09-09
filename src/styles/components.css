@@ -41,6 +41,40 @@
   margin-bottom: 8px;
 }
 
+/* Réglages globaux (plan.md §7/P6) : grille responsive, réutilisée aussi pour la surcharge
+   par morceau dans l'éditeur (voir .editor-side .settings-grid). */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.settings-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.settings-grid label.settings-checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-grid input[type='number'],
+.settings-grid select {
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0 8px;
+  font: inherit;
+}
+
 /* --- Bibliothèque -------------------------------------------------------------------- */
 
 .library-add-form {
@@ -620,4 +654,18 @@
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: #06131f;
+}
+
+.play-diagnostic {
+  width: 100%;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.play-diagnostic[data-kind='reject'] {
+  color: var(--color-danger);
 }

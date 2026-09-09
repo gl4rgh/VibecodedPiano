@@ -18,8 +18,11 @@ function clamp(value, min, max) {
  * Voir plan.md §5 pour le contrat et §7/P1 pour les critères d'acceptation.
  */
 export class PdfViewer {
-  /** @param {HTMLElement} container */
-  constructor(container) {
+  /**
+   * @param {HTMLElement} container
+   * @param {{ userScrollingTimeoutMs?: number, defaultZoom?: number|null }} [opts]
+   */
+  constructor(container, opts = {}) {
     this.container = container;
     this.container.classList.add('pdf-viewer');
 
@@ -27,6 +30,8 @@ export class PdfViewer {
     this.pdfDoc = null;
     this.pages = [];
     this.scale = 1;
+    this._userScrollingTimeoutMs = opts.userScrollingTimeoutMs ?? USER_SCROLLING_TIMEOUT_MS;
+    this._defaultZoom = opts.defaultZoom ?? null;
 
     this._programmaticScroll = false;
     this._programmaticScrollTimer = null;
@@ -55,6 +60,16 @@ export class PdfViewer {
   }
 
   /**
+   * Met à jour les réglages consultés par `load()`/les gestes utilisateur, sans recréer le
+   * viewer (utile quand on rouvre un morceau différent avec sa propre surcharge — plan.md §7/P6).
+   * @param {{ userScrollingTimeoutMs?: number, defaultZoom?: number|null }} opts
+   */
+  configure(opts = {}) {
+    if (opts.userScrollingTimeoutMs !== undefined) this._userScrollingTimeoutMs = opts.userScrollingTimeoutMs;
+    if (opts.defaultZoom !== undefined) this._defaultZoom = opts.defaultZoom;
+  }
+
+  /**
    * @param {Blob} blob
    * @returns {Promise<{ pageCount:number }>}
    */
@@ -67,7 +82,10 @@ export class PdfViewer {
     const pageCount = this.pdfDoc.numPages;
 
     const firstPage = await this.pdfDoc.getPage(1);
-    this.scale = this._computeFitWidthScale(firstPage);
+    this.scale =
+      this._defaultZoom && this._defaultZoom > 0
+        ? clamp(this._defaultZoom, MIN_SCALE, MAX_SCALE)
+        : this._computeFitWidthScale(firstPage);
 
     for (let i = 1; i <= pageCount; i++) {
       const page = i === 1 ? firstPage : await this.pdfDoc.getPage(i);
@@ -167,7 +185,7 @@ export class PdfViewer {
     this.pdfDoc = null;
   }
 
-  /** true si l'utilisateur a scrollé/touché/molette dans les USER_SCROLLING_TIMEOUT_MS dernières ms. */
+  /** true si l'utilisateur a scrollé/touché/molette dans les `userScrollingTimeoutMs` dernières ms. */
   get userScrolling() {
     return Date.now() < this._userScrollingUntil;
   }
@@ -178,7 +196,7 @@ export class PdfViewer {
 
   _onUserGesture() {
     if (!this._programmaticScroll) {
-      this._userScrollingUntil = Date.now() + USER_SCROLLING_TIMEOUT_MS;
+      this._userScrollingUntil = Date.now() + this._userScrollingTimeoutMs;
     }
   }
 

@@ -1,6 +1,7 @@
 import { getDocument } from '../pdf/pdf-loader.js';
 import { parseReference } from '../core/midi-reference.js';
-import { createPiece, listPieces, deletePiece } from '../core/store.js';
+import { createPiece, listPieces, deletePiece, getGlobalSettings, setGlobalSettings } from '../core/store.js';
+import { resolveSettings } from '../core/settings.js';
 
 /**
  * Vue « Bibliothèque » : import PDF+MIDI+titre -> création d'un Piece (IndexedDB via
@@ -16,6 +17,50 @@ export function mountLibraryView(container) {
   const submitBtn = container.querySelector('#library-add-submit');
   const statusEl = container.querySelector('#library-add-status');
   const listEl = container.querySelector('#library-list');
+
+  const settingsInputs = {
+    lead: container.querySelector('#setting-lead'),
+    lookahead: container.querySelector('#setting-lookahead'),
+    lookbehind: container.querySelector('#setting-lookbehind'),
+    chordWindowMs: container.querySelector('#setting-chordwindow'),
+    scrollSuspendMs: container.querySelector('#setting-scrollsuspend'),
+    defaultZoom: container.querySelector('#setting-defaultzoom'),
+    octaveAgnostic: container.querySelector('#setting-octaveagnostic'),
+    strictChords: container.querySelector('#setting-strictchords'),
+  };
+  const settingsStatusEl = container.querySelector('#global-settings-status');
+
+  async function loadGlobalSettingsForm() {
+    const resolved = resolveSettings(await getGlobalSettings(), {});
+    settingsInputs.lead.value = resolved.lead;
+    settingsInputs.lookahead.value = resolved.lookahead;
+    settingsInputs.lookbehind.value = resolved.lookbehind;
+    settingsInputs.chordWindowMs.value = resolved.chordWindowMs;
+    settingsInputs.scrollSuspendMs.value = resolved.scrollSuspendMs;
+    settingsInputs.defaultZoom.value = resolved.defaultZoom ?? '';
+    settingsInputs.octaveAgnostic.checked = resolved.octaveAgnostic;
+    settingsInputs.strictChords.checked = resolved.strictChords;
+  }
+
+  async function saveGlobalSettingsForm() {
+    await setGlobalSettings({
+      lead: Number(settingsInputs.lead.value),
+      lookahead: Number(settingsInputs.lookahead.value),
+      lookbehind: Number(settingsInputs.lookbehind.value),
+      chordWindowMs: Number(settingsInputs.chordWindowMs.value),
+      scrollSuspendMs: Number(settingsInputs.scrollSuspendMs.value),
+      defaultZoom: settingsInputs.defaultZoom.value === '' ? null : Number(settingsInputs.defaultZoom.value),
+      octaveAgnostic: settingsInputs.octaveAgnostic.checked,
+      strictChords: settingsInputs.strictChords.checked,
+    });
+    settingsStatusEl.textContent = 'Réglages enregistrés.';
+    setTimeout(() => { settingsStatusEl.textContent = ''; }, 2000);
+  }
+
+  Object.values(settingsInputs).forEach((input) => {
+    input.addEventListener('change', saveGlobalSettingsForm);
+  });
+  loadGlobalSettingsForm();
 
   async function refresh() {
     const pieces = await listPieces();
@@ -89,13 +134,30 @@ export function mountLibraryView(container) {
     statusEl.classList.remove('error');
 
     try {
-      const midiBuf = await midiFile.arrayBuffer();
-      const { events } = parseReference(midiBuf);
+      let events;
+      try {
+        const midiBuf = await midiFile.arrayBuffer();
+        const { chordWindowMs } = resolveSettings(await getGlobalSettings(), {});
+        events = parseReference(midiBuf, { chordWindowMs }).events;
+      } catch (err) {
+        throw new Error(`Fichier MIDI illisible : ${err.message}`);
+      }
+      if (events.length === 0) {
+        throw new Error(
+          "Ce fichier MIDI ne contient aucune note utilisable (fichier vide, ou uniquement " +
+            'des percussions sur le canal 10) — l\'app ne pourra pas suivre ce morceau.',
+        );
+      }
 
-      const pdfBuf = await pdfFile.arrayBuffer();
-      const pdfDoc = await getDocument(pdfBuf);
-      const pageCount = pdfDoc.numPages;
-      await pdfDoc.destroy();
+      let pageCount;
+      try {
+        const pdfBuf = await pdfFile.arrayBuffer();
+        const pdfDoc = await getDocument(pdfBuf);
+        pageCount = pdfDoc.numPages;
+        await pdfDoc.destroy();
+      } catch (err) {
+        throw new Error(`PDF illisible : ${err.message}`);
+      }
 
       await createPiece({
         title,

@@ -2,13 +2,12 @@ import { PdfViewer } from '../pdf/pdf-viewer.js';
 import { MidiInput } from '../core/midi-input.js';
 import { Matcher } from '../core/matcher.js';
 import { parseReference } from '../core/midi-reference.js';
-import { getPiece } from '../core/store.js';
+import { getPiece, getGlobalSettings } from '../core/store.js';
 import { sortAnchors, resolveActiveAnchor } from '../core/anchors.js';
 import { Hud } from './hud.js';
 import { ScreenWakeLock } from '../util/wake-lock.js';
 import { noteName } from '../util/note-names.js';
-
-const DEFAULT_LEAD = 4;
+import { resolveSettings } from '../core/settings.js';
 
 /**
  * Vue « Mode jeu » : plein écran, PDF seul + HUD discret en surimpression. Câblage
@@ -26,6 +25,8 @@ export function mountPlayView(container) {
   const pauseBtn = container.querySelector('#play-pause');
   const recenterBtn = container.querySelector('#play-recenter');
   const connectMidiBtn = container.querySelector('#play-connect-midi');
+  const diagnosticBtn = container.querySelector('#play-diagnostic');
+  const diagnosticPanelEl = container.querySelector('#play-diagnostic-panel');
 
   const pdfViewer = new PdfViewer(pdfContainer);
   const hud = new Hud(hudContainer);
@@ -41,6 +42,8 @@ export function mountPlayView(container) {
   let paused = false;
   let lastAppliedAnchorId = null;
   let noteScheme = 'en';
+  let resolvedSettings = null;
+  let diagnosticOn = false;
 
   midiInput.addEventListener('noteon', (e) => onNoteOn(e.detail.pitch));
   midiInput.addEventListener('statechange', () => hud.setMidiStatus(midiInput.status));
@@ -77,6 +80,24 @@ export function mountPlayView(container) {
 
   recenterBtn.addEventListener('click', () => jumpToCursor({ force: true }));
 
+  // --- Mode diagnostic (plan.md §7/P6) : affiche kind/stats en temps réel pour régler
+  // lookahead sur un vrai morceau, sans encombrer le HUD normal ("discret" par défaut). ---
+  diagnosticBtn.addEventListener('click', () => {
+    diagnosticOn = !diagnosticOn;
+    diagnosticBtn.classList.toggle('active', diagnosticOn);
+    diagnosticPanelEl.hidden = !diagnosticOn;
+    if (diagnosticOn) updateDiagnostic(null);
+  });
+
+  function updateDiagnostic(kind) {
+    if (!diagnosticOn || !matcher) return;
+    const { matched, skipped, rewinds, rejected } = matcher.stats;
+    diagnosticPanelEl.textContent =
+      `dernier : ${kind ?? '—'} · match ${matched} · skip ${skipped} · ` +
+      `rewind ${rewinds} · reject ${rejected}`;
+    diagnosticPanelEl.dataset.kind = kind ?? '';
+  }
+
   /**
    * Note-on -> avance du matcher -> ancre active -> scroll (§6.4). Le flash de la dernière
    * note reçue s'affiche TOUJOURS, même en pause : ça prouve que l'app entend le clavier même
@@ -85,7 +106,8 @@ export function mountPlayView(container) {
   function onNoteOn(pitch) {
     hud.flashNote(noteName(pitch, noteScheme));
     if (!matcher || paused) return;
-    matcher.onNoteOn(pitch);
+    const result = matcher.onNoteOn(pitch);
+    updateDiagnostic(result.kind);
     refreshHud();
     jumpToCursor({ force: false });
   }
@@ -119,7 +141,7 @@ export function mountPlayView(container) {
   }
 
   function defaultLead() {
-    return piece?.settings?.lead ?? DEFAULT_LEAD;
+    return resolvedSettings?.lead ?? 4;
   }
 
   function refreshHud() {
@@ -144,21 +166,41 @@ export function mountPlayView(container) {
     paused = false;
     pauseBtn.classList.remove('active');
     pauseBtn.textContent = 'Pause';
+    diagnosticPanelEl.hidden = !diagnosticOn;
 
-    const midiBuf = await piece.midiBlob.arrayBuffer();
-    refEvents = parseReference(midiBuf).events;
+    resolvedSettings = resolveSettings(await getGlobalSettings(), piece.settings);
 
-    const matcherOpts = {
-      lookahead: piece.settings?.lookahead,
-      lookbehind: piece.settings?.lookbehind,
-      octaveAgnostic: piece.settings?.octaveAgnostic,
-      strictChords: piece.settings?.strictChords,
-    };
-    matcher = new Matcher(refEvents, matcherOpts);
+    try {
+      const midiBuf = await piece.midiBlob.arrayBuffer();
+      refEvents = parseReference(midiBuf, { chordWindowMs: resolvedSettings.chordWindowMs }).events;
+    } catch (err) {
+      alert(`MIDI illisible : ${err.message}`);
+      location.hash = '#/library';
+      return;
+    }
 
-    await pdfViewer.load(piece.pdfBlob);
+    matcher = new Matcher(refEvents, {
+      lookahead: resolvedSettings.lookahead,
+      lookbehind: resolvedSettings.lookbehind,
+      octaveAgnostic: resolvedSettings.octaveAgnostic,
+      strictChords: resolvedSettings.strictChords,
+    });
+
+    pdfViewer.configure({
+      userScrollingTimeoutMs: resolvedSettings.scrollSuspendMs,
+      defaultZoom: resolvedSettings.defaultZoom,
+    });
+    try {
+      await pdfViewer.load(piece.pdfBlob);
+    } catch (err) {
+      alert(`PDF illisible : ${err.message}`);
+      location.hash = '#/library';
+      return;
+    }
+
     hud.setMidiStatus(midiInput.status);
     refreshHud();
+    updateDiagnostic(null);
     jumpToCursor({ force: true });
 
     await wakeLock.enable();

@@ -2,9 +2,10 @@ import { PdfViewer } from '../pdf/pdf-viewer.js';
 import { MidiTimeline } from './midi-timeline.js';
 import { MidiInput } from '../core/midi-input.js';
 import { parseReference } from '../core/midi-reference.js';
-import { getPiece, updatePiece } from '../core/store.js';
+import { getPiece, updatePiece, getGlobalSettings } from '../core/store.js';
 import { sortAnchors, upsertAnchor, removeAnchor, exportJson, importJson, sha256Hex } from '../core/anchors.js';
 import { noteName } from '../util/note-names.js';
+import { resolveSettings } from '../core/settings.js';
 
 const NOTE_FLASH_MS = 250;
 
@@ -46,6 +47,17 @@ export function mountEditorView(container) {
   const exportBtn = container.querySelector('#editor-export');
   const importTriggerBtn = container.querySelector('#editor-import-trigger');
   const importInput = container.querySelector('#editor-import-input');
+
+  const settingsInputs = {
+    lead: container.querySelector('#piece-setting-lead'),
+    lookahead: container.querySelector('#piece-setting-lookahead'),
+    lookbehind: container.querySelector('#piece-setting-lookbehind'),
+    chordWindowMs: container.querySelector('#piece-setting-chordwindow'),
+    scrollSuspendMs: container.querySelector('#piece-setting-scrollsuspend'),
+    defaultZoom: container.querySelector('#piece-setting-defaultzoom'),
+    octaveAgnostic: container.querySelector('#piece-setting-octaveagnostic'),
+    strictChords: container.querySelector('#piece-setting-strictchords'),
+  };
 
   const pdfViewer = new PdfViewer(pdfContainer);
   const midiTimeline = new MidiTimeline(timelineContainer);
@@ -275,9 +287,82 @@ export function mountEditorView(container) {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => {
       if (!piece) return;
-      await updatePiece(piece.id, { anchors: piece.anchors });
+      await updatePiece(piece.id, { anchors: piece.anchors, settings: piece.settings });
       setAutosaveStatus('Enregistré');
     }, AUTOSAVE_DEBOUNCE_MS);
+  }
+
+  // --- Réglages du morceau (surcharge des réglages globaux, plan.md §7/P6) ---------------------
+  function loadPieceSettingsForm() {
+    const raw = piece.settings ?? {};
+    settingsInputs.lead.value = raw.lead ?? '';
+    settingsInputs.lookahead.value = raw.lookahead ?? '';
+    settingsInputs.lookbehind.value = raw.lookbehind ?? '';
+    settingsInputs.chordWindowMs.value = raw.chordWindowMs ?? '';
+    settingsInputs.scrollSuspendMs.value = raw.scrollSuspendMs ?? '';
+    settingsInputs.defaultZoom.value = raw.defaultZoom ?? '';
+    settingsInputs.octaveAgnostic.value = raw.octaveAgnostic === undefined ? '' : String(raw.octaveAgnostic);
+    settingsInputs.strictChords.value = raw.strictChords === undefined ? '' : String(raw.strictChords);
+  }
+
+  async function savePieceSettingsField(key, rawValue, { numeric } = {}) {
+    if (!piece) return;
+    let value;
+    if (rawValue === '') {
+      value = undefined; // hérite du réglage global
+    } else if (numeric) {
+      value = Number(rawValue);
+    } else {
+      value = rawValue === 'true';
+    }
+
+    // Changer chordWindowMs redécoupe les événements : les eventIndex des ancres existantes
+    // peuvent ne plus correspondre au même endroit du morceau.
+    if (key === 'chordWindowMs' && piece.anchors.length > 0) {
+      if (
+        !confirm(
+          "Changer la fenêtre d'accord redécoupe les événements MIDI : les ancres déjà posées " +
+            'peuvent se retrouver décalées. Continuer ?',
+        )
+      ) {
+        loadPieceSettingsForm();
+        return;
+      }
+    }
+
+    piece = { ...piece, settings: { ...piece.settings, [key]: value } };
+    scheduleSave();
+
+    if (key === 'chordWindowMs') {
+      await reparseReference();
+    }
+    if (key === 'scrollSuspendMs' || key === 'defaultZoom') {
+      applyViewerSettings();
+    }
+  }
+
+  settingsInputs.lead.addEventListener('change', () => savePieceSettingsField('lead', settingsInputs.lead.value, { numeric: true }));
+  settingsInputs.lookahead.addEventListener('change', () => savePieceSettingsField('lookahead', settingsInputs.lookahead.value, { numeric: true }));
+  settingsInputs.lookbehind.addEventListener('change', () => savePieceSettingsField('lookbehind', settingsInputs.lookbehind.value, { numeric: true }));
+  settingsInputs.chordWindowMs.addEventListener('change', () => savePieceSettingsField('chordWindowMs', settingsInputs.chordWindowMs.value, { numeric: true }));
+  settingsInputs.scrollSuspendMs.addEventListener('change', () => savePieceSettingsField('scrollSuspendMs', settingsInputs.scrollSuspendMs.value, { numeric: true }));
+  settingsInputs.defaultZoom.addEventListener('change', () => savePieceSettingsField('defaultZoom', settingsInputs.defaultZoom.value, { numeric: true }));
+  settingsInputs.octaveAgnostic.addEventListener('change', () => savePieceSettingsField('octaveAgnostic', settingsInputs.octaveAgnostic.value));
+  settingsInputs.strictChords.addEventListener('change', () => savePieceSettingsField('strictChords', settingsInputs.strictChords.value));
+
+  /** Réapplique le chordWindowMs résolu et reconstruit la timeline (utilisé aussi à l'ouverture). */
+  async function reparseReference() {
+    const resolved = resolveSettings(await getGlobalSettings(), piece.settings);
+    const midiBuf = await piece.midiBlob.arrayBuffer();
+    refEvents = parseReference(midiBuf, { chordWindowMs: resolved.chordWindowMs }).events;
+    midiTimeline.setEvents(refEvents);
+  }
+
+  /** Réapplique scrollSuspendMs résolu au viewer PDF (sans recharger le PDF ; defaultZoom
+   * n'est consulté qu'au chargement, voir open()). */
+  async function applyViewerSettings() {
+    const resolved = resolveSettings(await getGlobalSettings(), piece.settings);
+    pdfViewer.configure({ userScrollingTimeoutMs: resolved.scrollSuspendMs });
   }
 
   // --- Export / import JSON ----------------------------------------------------------------------
@@ -364,12 +449,31 @@ export function mountEditorView(container) {
     selectedEventIndex = -1;
     captureCursor = -1;
     capturePending = new Set();
+    loadPieceSettingsForm();
 
-    const midiBuf = await piece.midiBlob.arrayBuffer();
-    refEvents = parseReference(midiBuf).events;
+    const resolved = resolveSettings(await getGlobalSettings(), piece.settings);
+
+    try {
+      const midiBuf = await piece.midiBlob.arrayBuffer();
+      refEvents = parseReference(midiBuf, { chordWindowMs: resolved.chordWindowMs }).events;
+    } catch (err) {
+      alert(`MIDI illisible : ${err.message}`);
+      location.hash = '#/library';
+      return;
+    }
+    if (refEvents.length === 0) {
+      alert("Ce MIDI ne contient aucune note utilisable — l'éditeur ne pourra pas poser d'ancres utiles.");
+    }
     midiTimeline.setEvents(refEvents);
 
-    await pdfViewer.load(piece.pdfBlob);
+    pdfViewer.configure({ userScrollingTimeoutMs: resolved.scrollSuspendMs, defaultZoom: resolved.defaultZoom });
+    try {
+      await pdfViewer.load(piece.pdfBlob);
+    } catch (err) {
+      alert(`PDF illisible : ${err.message}`);
+      location.hash = '#/library';
+      return;
+    }
 
     renderAnchorList();
     setMode(null);
