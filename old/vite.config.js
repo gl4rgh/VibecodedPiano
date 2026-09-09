@@ -20,7 +20,7 @@ export default defineConfig({
         // Sans le worker pdf.js (pdf.worker.min-*.mjs, servi comme asset JS séparé), le rendu
         // PDF casse hors-ligne — page blanche silencieuse, aucune erreur claire. Le motif
         // *.mjs le couvre déjà.
-        globPatterns: ['**/*.{js,mjs,css,html,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,mjs,css,html,png,svg}'],
       },
       manifest: {
         name: 'VibecodedPiano',
@@ -31,9 +31,8 @@ export default defineConfig({
         scope: '/VibecodedPiano/',
         display: 'standalone',
         orientation: 'any',
-        // Palette Nocturne (refonte cosmétique) — cohérence avec base.css --color-bg/--color-accent.
-        background_color: '#161826',
-        theme_color: '#161826',
+        background_color: '#121212',
+        theme_color: '#121212',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

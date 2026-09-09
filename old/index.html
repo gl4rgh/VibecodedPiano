@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#121212" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/VibecodedPiano/icons/icon-192.png" />
+    <title>VibecodedPiano</title>
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <link rel="stylesheet" href="/src/styles/components.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="view-library" class="view view-library" hidden>
+        <h1>Bibliothèque</h1>
+
+        <form id="library-add-form" class="library-add-form">
+          <input type="text" id="library-title-input" placeholder="Titre du morceau" required />
+          <label class="library-file-label">
+            PDF
+            <input type="file" id="library-pdf-input" accept="application/pdf" required />
+          </label>
+          <label class="library-file-label">
+            MIDI
+            <input type="file" id="library-midi-input" accept=".mid,.midi" required />
+          </label>
+          <button type="submit" id="library-add-submit">Ajouter</button>
+        </form>
+        <p id="library-add-status" class="library-add-status"></p>
+
+        <ul id="library-list" class="library-list"></ul>
+
+        <details class="debug-panels">
+          <summary>Réglages</summary>
+          <fieldset class="note-scheme-toggle">
+            <legend>Notation des notes</legend>
+            <label><input type="radio" name="note-scheme" value="en" checked /> Anglais</label>
+            <label><input type="radio" name="note-scheme" value="solfege" /> Solfège</label>
+          </fieldset>
+
+          <!-- Réglages globaux du matcher/viewer : valeurs par défaut pour tous les morceaux,
+               surchageables individuellement dans l'éditeur de chaque morceau. -->
+          <div class="settings-grid">
+            <label>
+              Lead (pré-roll ancre, en événements)
+              <input type="number" id="setting-lead" min="0" step="1" />
+            </label>
+            <label>
+              Lookahead (fenêtre de recherche avant)
+              <input type="number" id="setting-lookahead" min="0" step="1" />
+            </label>
+            <label>
+              Lookbehind (fenêtre de recherche arrière)
+              <input type="number" id="setting-lookbehind" min="0" step="1" />
+            </label>
+            <label>
+              Fenêtre d'accord (ms)
+              <input type="number" id="setting-chordwindow" min="0" step="5" />
+            </label>
+            <label>
+              Délai avant réarmement de l'auto-scroll (ms)
+              <input type="number" id="setting-scrollsuspend" min="0" step="500" />
+            </label>
+            <label>
+              Zoom par défaut (vide = ajusté à la largeur)
+              <input type="number" id="setting-defaultzoom" min="0.05" step="0.05" placeholder="auto" />
+            </label>
+            <label class="settings-checkbox">
+              <input type="checkbox" id="setting-octaveagnostic" /> Ignorer l'octave
+            </label>
+            <label class="settings-checkbox">
+              <input type="checkbox" id="setting-strictchords" /> Accords stricts (toutes les notes requises)
+            </label>
+          </div>
+          <p id="global-settings-status" class="library-add-status"></p>
+        </details>
+      </section>
+
+      <section id="view-editor" class="view view-editor" hidden>
+        <div class="editor-toolbar">
+          <button type="button" id="editor-back">← Bibliothèque</button>
+          <span id="editor-title" class="editor-title"></span>
+          <button type="button" id="editor-zoom-out" class="icon-btn" aria-label="Zoom -">−</button>
+          <button type="button" id="editor-zoom-in" class="icon-btn" aria-label="Zoom +">+</button>
+          <span id="editor-autosave" class="editor-autosave"></span>
+        </div>
+
+        <div class="editor-split">
+          <div id="editor-pdf-container" class="pdf-container"></div>
+
+          <div class="editor-side">
+            <details class="editor-section" open>
+              <summary>Poser une ancre</summary>
+              <div class="editor-anchor-tools">
+                <button type="button" id="editor-mode-select" data-mode="select">
+                  1. Sélectionner + cliquer sur le PDF
+                </button>
+                <button type="button" id="editor-mode-capture" data-mode="capture">
+                  2. Mode capture (jouer au clavier)
+                </button>
+                <button type="button" id="editor-anchor-pages">3. Ancre au début de chaque page</button>
+              </div>
+              <p id="editor-mode-status" class="editor-mode-status"></p>
+            </details>
+
+            <details class="editor-section" open>
+              <summary>Timeline MIDI</summary>
+              <div class="editor-io">
+                <button type="button" id="editor-preview-play">▶ Pré-écouter</button>
+                <span class="editor-mode-status">depuis l'événement sélectionné, ou le début</span>
+              </div>
+              <div id="editor-timeline-container" class="editor-timeline-container"></div>
+            </details>
+
+            <details class="editor-section" open>
+              <summary>Ancres</summary>
+              <ul id="editor-anchor-list" class="editor-anchor-list"></ul>
+            </details>
+
+            <details class="editor-section" open>
+              <summary>Clavier &amp; export</summary>
+              <div class="editor-io">
+                <button type="button" id="editor-connect-midi">Connecter le clavier</button>
+                <select id="editor-midi-port-select" aria-label="Port MIDI">
+                  <option value="">Tous les ports</option>
+                </select>
+                <span id="editor-midi-status" class="midi-status" data-status="idle">idle</span>
+              </div>
+              <div id="editor-midi-last-note" class="editor-midi-last-note">Aucune note reçue</div>
+              <div class="editor-io">
+                <button type="button" id="editor-export">Exporter JSON</button>
+                <button type="button" id="editor-import-trigger">Importer JSON</button>
+                <input type="file" id="editor-import-input" accept="application/json" hidden />
+              </div>
+            </details>
+
+            <!-- Surcharge par morceau des réglages globaux : un champ vide signifie "hérite
+                 du réglage global" (voir core/settings.js resolveSettings). -->
+            <details class="editor-section">
+              <summary>Réglages du morceau</summary>
+              <div class="settings-grid">
+                <label>
+                  Lead
+                  <input type="number" id="piece-setting-lead" min="0" step="1" placeholder="global" />
+                </label>
+                <label>
+                  Lookahead
+                  <input type="number" id="piece-setting-lookahead" min="0" step="1" placeholder="global" />
+                </label>
+                <label>
+                  Lookbehind
+                  <input type="number" id="piece-setting-lookbehind" min="0" step="1" placeholder="global" />
+                </label>
+                <label>
+                  Fenêtre d'accord (ms)
+                  <input type="number" id="piece-setting-chordwindow" min="0" step="5" placeholder="global" />
+                </label>
+                <label>
+                  Délai auto-scroll (ms)
+                  <input type="number" id="piece-setting-scrollsuspend" min="0" step="500" placeholder="global" />
+                </label>
+                <label>
+                  Zoom par défaut
+                  <input type="number" id="piece-setting-defaultzoom" min="0.05" step="0.05" placeholder="global" />
+                </label>
+                <label>
+                  Ignorer l'octave
+                  <select id="piece-setting-octaveagnostic">
+                    <option value="">Réglage global</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </label>
+                <label>
+                  Accords stricts
+                  <select id="piece-setting-strictchords">
+                    <option value="">Réglage global</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </label>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-play" class="view view-play" hidden>
+        <div id="play-pdf-container" class="pdf-container"></div>
+
+        <div class="play-overlay">
+          <div id="play-hud" class="hud"></div>
+          <div class="play-controls">
+            <button type="button" id="play-back" class="icon-btn" aria-label="Retour à la bibliothèque">←</button>
+            <button type="button" id="play-prev-anchor" aria-label="Ancre précédente">◀</button>
+            <button type="button" id="play-reset">Reset</button>
+            <button type="button" id="play-next-anchor" aria-label="Ancre suivante">▶</button>
+            <button type="button" id="play-pause">Pause</button>
+            <button type="button" id="play-recenter">Recentrer</button>
+            <button type="button" id="play-connect-midi">Clavier</button>
+            <button type="button" id="play-diagnostic">Diagnostic</button>
+          </div>
+          <div id="play-diagnostic-panel" class="play-diagnostic" hidden></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

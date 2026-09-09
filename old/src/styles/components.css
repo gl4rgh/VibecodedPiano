@@ -1,63 +1,19 @@
-/* Styles des composants UI (bibliothèque, éditeur, mode jeu). Système Nocturne (voir
-   README de design). Icônes Phosphor inline, sur currentColor. */
-
-/* — icônes / boutons génériques ------------------------------------------------------- */
-
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-dim);
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
-}
-.icon-btn:hover {
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
-}
-
-.btn-label {
-  white-space: nowrap;
-}
-
-/* Chevron des <details> — pointe à droite fermé, vers le bas ouvert. Remplace le marqueur
-   natif du navigateur pour rester cohérent avec le reste de l'UI. */
-summary {
-  list-style: none;
-}
-summary::-webkit-details-marker {
-  display: none;
-}
-summary .caret {
-  width: 12px;
-  height: 12px;
-  color: var(--color-text-dim);
-  transition: transform 150ms ease;
-}
-details[open] > summary .caret {
-  transform: rotate(90deg);
-}
+/* Styles des composants UI (bibliothèque, éditeur, mode jeu). À étoffer phase par phase. */
 
 .note-scheme-toggle {
-  display: inline-flex;
-  gap: 0;
+  display: flex;
+  gap: 16px;
   align-items: center;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0;
-  margin: 0 0 var(--space-4);
-  overflow: hidden;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0 0 12px;
 }
 
 .note-scheme-toggle legend {
-  padding: var(--space-1) var(--space-3);
+  padding: 0 6px;
   color: var(--color-text-dim);
-  font-size: 0.75rem;
-  width: 100%;
+  font-size: 0.85rem;
 }
 
 .note-scheme-toggle label {
@@ -65,42 +21,24 @@ details[open] > summary .caret {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  padding: var(--space-2) var(--space-4);
-  font-size: 0.85rem;
-}
-.note-scheme-toggle label:has(input:checked) {
-  color: var(--color-accent);
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-}
-.note-scheme-toggle label:not(:has(input:checked)):hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
-}
-.note-scheme-toggle input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
 }
 
 .debug-panels {
-  margin-top: var(--space-4);
+  margin-top: 12px;
   border-top: 1px solid var(--color-border);
-  padding-top: var(--space-3);
+  padding-top: 8px;
 }
 
 .debug-panels summary {
   cursor: pointer;
-  padding: var(--space-2) 0;
+  padding: 6px 0;
   color: var(--color-text-dim);
   font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .debug-panels[open] summary {
   border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--space-3);
+  margin-bottom: 8px;
 }
 
 /* Réglages globaux : grille responsive, réutilisée aussi pour la surcharge par morceau
@@ -108,8 +46,8 @@ details[open] > summary .caret {
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-3);
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .settings-grid label {
@@ -128,21 +66,13 @@ details[open] > summary .caret {
 
 .settings-grid input[type='number'],
 .settings-grid select {
-  height: 36px;
-  border-radius: var(--radius-md);
+  height: 34px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
-  padding: 0 10px;
+  padding: 0 8px;
   font: inherit;
-}
-.settings-grid input[type='number']:hover,
-.settings-grid select:hover {
-  border-color: color-mix(in srgb, var(--color-text) 45%, transparent);
-}
-.settings-grid input[type='number']:focus-visible,
-.settings-grid select:focus-visible {
-  border-color: var(--color-accent);
 }
 
 /* --- Bibliothèque -------------------------------------------------------------------- */
@@ -150,64 +80,38 @@ details[open] > summary .caret {
 .library-add-form {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: 8px;
   align-items: flex-end;
-  margin: var(--space-3) 0;
+  margin: 8px 0;
 }
 
 .library-add-form input[type='text'] {
-  flex: 1 1 180px;
+  flex: 1 1 160px;
   min-width: 0;
-  height: 38px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   color: inherit;
-  padding: 0 12px;
+  padding: 8px 10px;
   font: inherit;
-}
-.library-add-form input[type='text']:hover {
-  border-color: color-mix(in srgb, var(--color-text) 45%, transparent);
-}
-.library-add-form input[type='text']:focus-visible {
-  border-color: var(--color-accent);
 }
 
 .library-file-label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   font-size: 0.75rem;
   color: var(--color-text-dim);
 }
-.library-file-label input[type='file'] {
-  color: var(--color-text-dim);
-  font-size: 0.8rem;
-  max-width: 180px;
-}
 
 .library-add-form button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   height: 38px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-accent);
-  background: transparent;
-  color: var(--color-accent);
-  padding: 0 var(--space-4);
-  font-weight: 500;
-  transition: background-color 120ms ease;
-}
-.library-add-form button:hover {
-  background: var(--color-accent-hover);
-}
-.library-add-form button:active {
-  background: var(--color-accent-active);
-}
-.library-add-form button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-accent);
+  color: #06131f;
+  padding: 0 14px;
+  font-weight: 600;
 }
 
 .library-add-status {
@@ -222,32 +126,29 @@ details[open] > summary .caret {
 
 .library-list {
   list-style: none;
-  margin: var(--space-4) 0 0;
+  margin: 12px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 8px;
 }
 
 .library-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
 }
 
 .library-item-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
-}
-.library-item-info strong {
-  font-weight: 500;
 }
 
 .library-item-meta {
@@ -257,46 +158,35 @@ details[open] > summary .caret {
 
 .library-item-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: 6px;
   flex: 0 0 auto;
 }
 
 .library-item-actions button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  border-radius: var(--radius-md);
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text);
-  padding: 0 var(--space-3);
+  background: var(--color-bg);
+  color: inherit;
+  padding: 0 10px;
   font-size: 0.85rem;
-  transition: background-color 120ms ease, border-color 120ms ease;
-}
-.library-item-actions button:hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
 
 .library-delete-btn {
   color: var(--color-danger);
-  border-color: color-mix(in srgb, var(--color-danger) 45%, transparent);
-}
-.library-delete-btn:hover {
-  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  border-color: var(--color-danger);
 }
 
 .library-play-btn {
-  color: var(--color-accent);
+  color: #06131f;
+  background: var(--color-accent);
   border-color: var(--color-accent);
-  font-weight: 500;
+  font-weight: 600;
 }
-.library-play-btn:hover {
-  background: var(--color-accent-hover);
-}
+
 .library-play-btn:disabled {
   color: var(--color-text-dim);
-  background: transparent;
+  background: var(--color-bg);
   border-color: var(--color-border);
   font-weight: normal;
   cursor: not-allowed;
@@ -305,7 +195,7 @@ details[open] > summary .caret {
 .library-empty {
   color: var(--color-text-dim);
   font-size: 0.9rem;
-  padding: var(--space-4) 0;
+  padding: 12px 0;
 }
 
 /* --- Viewer PDF (partagé bibliothèque/éditeur) ---------------------------------------- */
@@ -320,15 +210,14 @@ details[open] > summary .caret {
   overflow-x: auto;
   flex: 1 1 auto;
   min-height: 0;
-  background: #0c0d15;
+  background: #0a0a0a;
 }
 
 .pdf-page {
   position: relative;
-  margin: var(--space-4) auto;
+  margin: 12px auto;
   background: #fff;
-  box-shadow: var(--shadow-md);
-  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .pdf-page canvas {
@@ -338,18 +227,15 @@ details[open] > summary .caret {
 /* --- MIDI (statut partagé, timeline) --------------------------------------------------- */
 
 .midi-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
+  padding: 2px 8px;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   background: var(--color-surface);
   color: var(--color-text-dim);
 }
 
 .midi-status[data-status='ready'] {
-  color: var(--color-success);
+  color: #6fdc8c;
 }
 
 .midi-status[data-status='denied'],
@@ -362,10 +248,9 @@ details[open] > summary .caret {
   overflow-y: auto;
   height: 260px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-mono);
+  border-radius: 6px;
+  font-family: ui-monospace, monospace;
   font-size: 0.8rem;
-  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
 }
 
 .midi-timeline-spacer {
@@ -377,20 +262,17 @@ details[open] > summary .caret {
   left: 0;
   right: 0;
   display: flex;
-  gap: var(--space-3);
+  gap: 10px;
   align-items: center;
   height: 28px;
-  padding: 0 var(--space-3);
+  padding: 0 8px;
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
-}
-.midi-timeline-row:hover {
-  background: color-mix(in srgb, var(--color-text) 6%, transparent);
 }
 
 .midi-timeline-row.current {
   background: var(--color-accent);
-  color: var(--color-accent-ink);
+  color: #06131f;
 }
 
 .midi-timeline-row.selected {
@@ -430,30 +312,25 @@ details[open] > summary .caret {
 .editor-toolbar {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: 8px;
+  padding: 6px 8px;
   flex: 0 0 auto;
   border-bottom: 1px solid var(--color-border);
 }
 
 .editor-toolbar button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   height: 36px;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: var(--color-surface);
   color: inherit;
-  padding: 0 var(--space-3);
-  transition: background-color 120ms ease;
-}
-.editor-toolbar button:hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  padding: 0 10px;
 }
 
 .editor-toolbar .icon-btn {
+  width: 36px;
   padding: 0;
+  font-size: 1.1rem;
 }
 
 .editor-title {
@@ -462,8 +339,7 @@ details[open] > summary .caret {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 500;
-  font-family: var(--font-heading);
+  font-weight: 600;
 }
 
 .editor-autosave {
@@ -483,15 +359,13 @@ details[open] > summary .caret {
 
 /* Colonne entièrement scrollable (et non un partage flex figé entre sous-panneaux) : chaque
    section est un <details> indépendant (voir .editor-section) qu'on peut replier pour libérer
-   de la place à l'écran — utile sur petit écran où tout ne rentre jamais en même temps. Le
-   choix produit est que TOUTE la colonne scrolle en un bloc (pas de scroll interne par
-   section) : les sections servent à replier, pas à limiter la hauteur. */
+   de la place à l'écran — utile sur petit écran où tout ne rentre jamais en même temps. */
 .editor-side {
   display: block;
-  width: 360px;
-  flex: 0 0 360px;
+  width: 340px;
+  flex: 0 0 340px;
   min-height: 0;
-  padding: var(--space-3);
+  padding: 8px;
   overflow-y: auto;
   border-left: 1px solid var(--color-border);
 }
@@ -511,63 +385,51 @@ details[open] > summary .caret {
 
 .editor-section {
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0 var(--space-3) var(--space-3);
-  margin-bottom: var(--space-3);
-  background: color-mix(in srgb, var(--color-surface) 55%, transparent);
+  border-radius: 6px;
+  padding: 0 8px 8px;
+  margin-bottom: 10px;
 }
 
 .editor-section summary {
   cursor: pointer;
-  padding: var(--space-3) 0;
+  padding: 8px 0;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-dim);
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .editor-section[open] summary {
   border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--space-3);
+  margin-bottom: 8px;
 }
 
 .editor-anchor-tools {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
 .editor-anchor-tools button,
 .editor-io button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 38px;
-  border-radius: var(--radius-md);
+  height: 36px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: var(--color-surface);
   color: inherit;
-  padding: 0 var(--space-3);
+  padding: 0 10px;
   font-size: 0.85rem;
   text-align: left;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
-}
-.editor-anchor-tools button:hover,
-.editor-io button:hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
 
 .editor-anchor-tools button.active {
-  background: var(--color-accent-hover);
+  background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: #06131f;
 }
 
 .editor-mode-status {
   min-height: 1.1em;
-  margin-top: var(--space-2);
+  margin-top: 6px;
   font-size: 0.8rem;
   color: var(--color-text-dim);
 }
@@ -587,24 +449,20 @@ details[open] > summary .caret {
 .editor-anchor-row {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
+  gap: 6px;
+  padding: 4px 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .editor-anchor-jump {
   flex: 0 0 auto;
-  font-family: var(--font-mono);
+  font-family: ui-monospace, monospace;
   font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: inherit;
-}
-.editor-anchor-jump:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
 }
 
 .editor-anchor-label {
@@ -612,13 +470,10 @@ details[open] > summary .caret {
   min-width: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   color: inherit;
-  padding: 5px 8px;
+  padding: 4px 6px;
   font: inherit;
-}
-.editor-anchor-label:focus-visible {
-  border-color: var(--color-accent);
 }
 
 .editor-anchor-page {
@@ -629,28 +484,16 @@ details[open] > summary .caret {
 
 .editor-anchor-delete {
   flex: 0 0 auto;
-  display: inline-flex;
-  width: 26px;
-  height: 26px;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
   background: none;
   border: none;
   color: var(--color-danger);
+  font-size: 1rem;
   cursor: pointer;
-  padding: 0;
-}
-.editor-anchor-delete:hover {
-  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
-}
-.editor-anchor-delete svg {
-  width: 14px;
-  height: 14px;
+  padding: 0 4px;
 }
 
 .editor-anchor-empty {
-  padding: var(--space-3) 0;
+  padding: 8px 0;
   font-size: 0.85rem;
   color: var(--color-text-dim);
 }
@@ -659,8 +502,8 @@ details[open] > summary .caret {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .editor-io:last-child {
@@ -669,11 +512,11 @@ details[open] > summary .caret {
 
 .editor-io select {
   height: 36px;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: inherit;
-  padding: 0 var(--space-2);
+  padding: 0 8px;
   font-size: 0.8rem;
   max-width: 160px;
 }
@@ -682,20 +525,20 @@ details[open] > summary .caret {
    (sélection/capture) : sans ça, rien à l'écran ne dit que le clavier envoie des notes. */
 .editor-midi-last-note {
   display: inline-block;
-  margin-bottom: var(--space-3);
-  font-family: var(--font-mono);
+  margin-bottom: 8px;
+  font-family: ui-monospace, monospace;
   font-size: 0.85rem;
-  padding: 5px 10px;
-  border-radius: var(--radius-md);
+  padding: 4px 8px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text-dim);
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
 .editor-midi-last-note.flash {
   background: var(--color-accent);
-  color: var(--color-accent-ink);
+  color: #06131f;
   border-color: var(--color-accent);
 }
 
@@ -712,7 +555,6 @@ details[open] > summary .caret {
   inset: 0;
 }
 
-/* HUD en carte pleine, opaque et lisible (choix produit) — pas de transparence/flou. */
 .play-overlay {
   position: absolute;
   top: 0;
@@ -722,37 +564,32 @@ details[open] > summary .caret {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-md);
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(10, 10, 10, 0.78);
+  backdrop-filter: blur(4px);
 }
 
 .hud {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+  gap: 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
   color: var(--color-text-dim);
 }
 
-.hud-position {
-  color: var(--color-text);
-  font-weight: 500;
-}
-
 .hud-last-note {
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
 .hud-last-note.flash {
   background: var(--color-accent);
-  color: var(--color-accent-ink);
+  color: #06131f;
   border-color: var(--color-accent);
 }
 
@@ -765,7 +602,7 @@ details[open] > summary .caret {
 }
 
 .hud-midi-dot[data-status='ready'] {
-  background: var(--color-success);
+  background: #6fdc8c;
 }
 
 .hud-midi-dot[data-status='denied'],
@@ -790,53 +627,41 @@ details[open] > summary .caret {
   white-space: nowrap;
 }
 
-.hud-errors {
-  color: var(--color-danger);
-}
-
 .play-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  gap: 6px;
   margin-left: auto;
 }
 
 .play-controls button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  border-radius: var(--radius-md);
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: var(--color-surface);
   color: inherit;
-  padding: 0 var(--space-3);
+  padding: 0 8px;
   font-size: 0.8rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
-}
-.play-controls button:hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
 
 .play-controls .icon-btn {
+  width: 32px;
   padding: 0;
-  height: 34px;
-  width: 34px;
 }
 
 .play-controls button.active {
-  background: var(--color-accent-hover);
+  background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: #06131f;
 }
 
 .play-diagnostic {
   width: 100%;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
+  margin-top: 6px;
+  padding-top: 6px;
   border-top: 1px solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: ui-monospace, monospace;
   font-size: 0.75rem;
   color: var(--color-text-dim);
 }
@@ -850,19 +675,19 @@ details[open] > summary .caret {
 .toast-banner {
   position: fixed;
   left: 50%;
-  bottom: var(--space-6);
+  bottom: 16px;
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 10px;
   max-width: calc(100vw - 32px);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-accent);
   background: var(--color-surface);
   color: var(--color-text);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .toast-message {
@@ -870,32 +695,24 @@ details[open] > summary .caret {
 }
 
 .toast-banner button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   height: 32px;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: var(--color-bg);
   color: inherit;
-  padding: 0 var(--space-3);
+  padding: 0 10px;
   font-size: 0.8rem;
   flex: 0 0 auto;
 }
 
 .toast-action {
+  background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-accent);
-  font-weight: 500;
-}
-.toast-action:hover {
-  background: var(--color-accent-hover);
+  color: #06131f;
+  font-weight: 600;
 }
 
 .toast-close {
   width: 32px;
   padding: 0;
-}
-.toast-close:hover {
-  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }

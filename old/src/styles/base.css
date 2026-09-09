@@ -1,0 +1,58 @@
+:root {
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text: #e8e8e8;
+  --color-text-dim: #9a9a9a;
+  --color-accent: #4fa3ff;
+  --color-danger: #ff5c5c;
+  --color-border: #333333;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#app {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.view {
+  height: 100%;
+  overflow: auto;
+  touch-action: pan-y;
+}
+
+/* Piège : une règle de vue qui pose `display` (ex. .view-editor { display: flex }) l'emporte
+   sinon sur `[hidden]` (même spécificité, origine "auteur" > feuille par défaut du navigateur)
+   et la vue reste en layout — donc mesurable, redimensionnée par son ResizeObserver, etc. —
+   même masquée. Cette règle regagne systématiquement la priorité quand `hidden` est posé. */
+.view[hidden] {
+  display: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
