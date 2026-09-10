@@ -14,6 +14,8 @@ const ICON_PAUSE =
 const ICON_PLAY =
   '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>';
 
+const ZOOM_STEP = 0.1;
+
 /**
  * Vue « Mode jeu » : plein écran, PDF seul + HUD discret en surimpression. Câblage
  * noteon -> matcher.onNoteOn -> resolveActiveAnchor -> viewer.scrollToAnchor.
@@ -29,11 +31,18 @@ export function mountPlayView(container) {
   const nextAnchorBtn = container.querySelector('#play-next-anchor');
   const pauseBtn = container.querySelector('#play-pause');
   const recenterBtn = container.querySelector('#play-recenter');
+  const zoomOutBtn = container.querySelector('#play-zoom-out');
+  const zoomInBtn = container.querySelector('#play-zoom-in');
+  const zoomSlider = container.querySelector('#play-zoom-slider');
   const connectMidiBtn = container.querySelector('#play-connect-midi');
   const diagnosticBtn = container.querySelector('#play-diagnostic');
   const diagnosticPanelEl = container.querySelector('#play-diagnostic-panel');
 
-  const pdfViewer = new PdfViewer(pdfContainer);
+  const pdfViewer = new PdfViewer(pdfContainer, {
+    onZoomChange: (scale) => {
+      zoomSlider.value = scale;
+    },
+  });
   const hud = new Hud(hudContainer);
   const midiInput = new MidiInput();
   const wakeLock = new ScreenWakeLock();
@@ -86,6 +95,16 @@ export function mountPlayView(container) {
   });
 
   recenterBtn.addEventListener('click', () => jumpToCursor({ force: true }));
+
+  zoomOutBtn.addEventListener('click', () => {
+    pdfViewer.setZoom(pdfViewer.scale - ZOOM_STEP);
+  });
+  zoomInBtn.addEventListener('click', () => {
+    pdfViewer.setZoom(pdfViewer.scale + ZOOM_STEP);
+  });
+  zoomSlider.addEventListener('input', () => {
+    pdfViewer.setZoom(parseFloat(zoomSlider.value));
+  });
 
   // --- Mode diagnostic : affiche kind/stats en temps réel pour régler lookahead sur un vrai
   // morceau, sans encombrer le HUD normal ("discret" par défaut). ---------------------------

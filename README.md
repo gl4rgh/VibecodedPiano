@@ -1,4 +1,4 @@
-# VibecodedPiano — v1.1
+# VibecodedPiano — v1.1.1
 
 **Le problème que ça résout** : quand on joue du piano avec une partition PDF sous les yeux, il
 faut s'arrêter pour tourner la page (ou scroller) — ce qui casse le jeu. VibecodedPiano écoute
@@ -27,8 +27,10 @@ compte : tout reste sur l'appareil, y compris hors connexion.
 3. **Mode jeu** — plein écran, PDF seul avec un HUD discret : position dans le morceau,
    prochaine touche (ou accord) attendue, ancre active, compteur d'erreurs, dernière note
    reçue. Contrôles : Reset, ancre précédente/suivante, Pause du suivi, Recentrer (après un
-   scroll manuel), et un mode Diagnostic qui détaille en temps réel comment chaque note a été
-   interprétée (jouée juste, note sautée, reprise, rejetée) — utile pour affiner les réglages.
+   scroll manuel), un slider de zoom (boutons +/- ou pincement tactile) pour ajuster
+   confortablement la taille de la partition, et un mode Diagnostic qui détaille en temps réel
+   comment chaque note a été interprétée (jouée juste, note sautée, reprise, rejetée) — utile
+   pour affiner les réglages.
 
 ## Fonctionnalités
 
