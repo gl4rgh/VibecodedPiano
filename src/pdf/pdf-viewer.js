@@ -31,6 +31,7 @@ export class PdfViewer {
     this.scale = 1;
     this._userScrollingTimeoutMs = opts.userScrollingTimeoutMs ?? USER_SCROLLING_TIMEOUT_MS;
     this._defaultZoom = opts.defaultZoom ?? null;
+    this._onZoomChange = opts.onZoomChange ?? null;
 
     this._programmaticScroll = false;
     this._programmaticScrollTimer = null;
@@ -66,6 +67,7 @@ export class PdfViewer {
   configure(opts = {}) {
     if (opts.userScrollingTimeoutMs !== undefined) this._userScrollingTimeoutMs = opts.userScrollingTimeoutMs;
     if (opts.defaultZoom !== undefined) this._defaultZoom = opts.defaultZoom;
+    if (opts.onZoomChange !== undefined) this._onZoomChange = opts.onZoomChange;
   }
 
   /**
@@ -103,6 +105,7 @@ export class PdfViewer {
     }
 
     this._updateVisiblePages();
+    this._onZoomChange?.(this.scale);
     return { pageCount };
   }
 
@@ -167,6 +170,7 @@ export class PdfViewer {
       this._freePage(entry);
     }
     this._updateVisiblePages();
+    this._onZoomChange?.(this.scale);
   }
 
   destroy() {
