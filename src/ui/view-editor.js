@@ -43,6 +43,7 @@ export function mountEditorView(container) {
   const backBtn = container.querySelector('#editor-back');
   const zoomOutBtn = container.querySelector('#editor-zoom-out');
   const zoomInBtn = container.querySelector('#editor-zoom-in');
+  const zoomSlider = container.querySelector('#editor-zoom-slider');
   const modeSelectBtn = container.querySelector('#editor-mode-select');
   const modeCaptureBtn = container.querySelector('#editor-mode-capture');
   const anchorPagesBtn = container.querySelector('#editor-anchor-pages');
@@ -69,7 +70,11 @@ export function mountEditorView(container) {
     strictChords: container.querySelector('#piece-setting-strictchords'),
   };
 
-  const pdfViewer = new PdfViewer(pdfContainer);
+  const pdfViewer = new PdfViewer(pdfContainer, {
+    onZoomChange: (scale) => {
+      zoomSlider.value = scale;
+    },
+  });
   const midiTimeline = new MidiTimeline(timelineContainer);
   const midiInput = new MidiInput();
   const audioPreview = new AudioPreview();
@@ -464,6 +469,7 @@ export function mountEditorView(container) {
   });
   zoomOutBtn.addEventListener('click', () => pdfViewer.setZoom(pdfViewer.scale - 0.2));
   zoomInBtn.addEventListener('click', () => pdfViewer.setZoom(pdfViewer.scale + 0.2));
+  zoomSlider.addEventListener('input', () => pdfViewer.setZoom(parseFloat(zoomSlider.value)));
 
   // --- Ouverture / fermeture --------------------------------------------------------------------
   async function open(id) {
