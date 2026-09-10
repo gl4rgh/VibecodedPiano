@@ -1,4 +1,4 @@
-# VibecodedPiano — v1.1.1
+# VibecodedPiano — v1.1.2
 
 **Le problème que ça résout** : quand on joue du piano avec une partition PDF sous les yeux, il
 faut s'arrêter pour tourner la page (ou scroller) — ce qui casse le jeu. VibecodedPiano écoute
@@ -22,8 +22,8 @@ compte : tout reste sur l'appareil, y compris hors connexion.
    - une ancre au début de chaque page, en un clic (position à ajuster ensuite).
 
    On peut aussi pré-écouter le MIDI de référence (synthèse simple) pour se repérer à l'oreille,
-   exporter/importer les ancres en JSON, et régler le comportement du suivi pour ce morceau en
-   particulier (voir Réglages ci-dessous).
+   exporter/importer les ancres en JSON, régler le comportement du suivi pour ce morceau en
+   particulier (voir Réglages ci-dessous), et ajuster le zoom du PDF (boutons -/+ ou slider).
 3. **Mode jeu** — plein écran, PDF seul avec un HUD discret : position dans le morceau,
    prochaine touche (ou accord) attendue, ancre active, compteur d'erreurs, dernière note
    reçue. Contrôles : Reset, ancre précédente/suivante, Pause du suivi, Recentrer (après un
