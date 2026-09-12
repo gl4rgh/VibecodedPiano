@@ -285,77 +285,37 @@
 
       <p class="functions-warning">
         ⚠️ Spécifique au <strong>CASIO CDP-S360 / EP-S330</strong> — sur un autre modèle (même
-        Casio), les numéros de son et les réglages ci-dessous ne correspondront à rien de bon.
+        Casio), ces numéros ne correspondront à rien de bon. Pure référence à consulter : rien
+        ici n'est envoyé au piano, tout se règle à la main sur l'instrument.
       </p>
 
-      <div class="editor-io">
-        <button type="button" id="functions-connect-midi">
-          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
-          Connecter la sortie MIDI
-        </button>
-        <select id="functions-midi-port-select" aria-label="Port MIDI de sortie">
-          <option value="">Aucun port</option>
-        </select>
-        <span id="functions-midi-status" class="midi-status" data-status="idle">idle</span>
-      </div>
-      <label class="functions-channel-label">
-        Canal MIDI (= réglage "Keybd Ch" du piano, 1 par défaut)
-        <select id="functions-midi-channel" aria-label="Canal MIDI de sortie"></select>
-      </label>
-
       <details class="editor-section" open>
-        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Changer de son</summary>
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Sons (700) — quel numéro composer sur le piano</summary>
         <div class="functions-tone-picker">
           <input type="search" id="functions-tone-search" placeholder="Rechercher un son…" aria-label="Rechercher un son" />
-          <select id="functions-tone-select" size="8" aria-label="Liste des sons"></select>
-          <p id="functions-tone-selected" class="functions-tone-selected">Aucun son sélectionné.</p>
+          <select id="functions-tone-select" size="16" aria-label="Liste des sons"></select>
+          <p id="functions-tone-selected" class="functions-tone-selected">Choisis un son pour voir son numéro.</p>
         </div>
       </details>
 
-      <details class="editor-section">
-        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Effets</summary>
-        <div class="settings-grid">
-          <label>
-            Reverb
-            <select id="functions-reverb" aria-label="Type de reverb"></select>
-          </label>
-          <label>
-            Niveau reverb
-            <input type="range" id="functions-reverb-level" min="0" max="127" value="64" aria-label="Niveau d'envoi reverb" />
-          </label>
-          <label>
-            Chorus
-            <select id="functions-chorus" aria-label="Type de chorus"></select>
-          </label>
-          <label>
-            Niveau chorus
-            <input type="range" id="functions-chorus-level" min="0" max="127" value="64" aria-label="Niveau d'envoi chorus" />
-          </label>
-          <label>
-            Volume du canal
-            <input type="range" id="functions-channel-volume" min="0" max="127" value="100" aria-label="Volume du canal" />
-          </label>
-        </div>
-      </details>
-
-      <details class="editor-section">
-        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Arpégiateur &amp; Auto Harmonize (info)</summary>
+      <details class="editor-section" open>
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Arpégiateur (100 types)</summary>
         <p class="functions-local-note">
-          Pas de commande MIDI documentée pour piloter ces réglages à distance — à changer
-          directement sur le piano (bouton A.HAR./ARPEG. + molette). Listes fournies à titre de
-          référence pour savoir quoi chercher sur l'instrument.
+          Bouton A.HAR./ARPEG. (appui long) + molette sur le piano pour choisir un type.
         </p>
-        <details class="functions-subsection">
-          <summary>100 types d'arpège</summary>
-          <ul id="functions-arpeggio-list" class="functions-ref-list"></ul>
-        </details>
-        <details class="functions-subsection">
-          <summary>12 types d'Auto Harmonize</summary>
-          <ul id="functions-harmonize-list" class="functions-ref-list"></ul>
-        </details>
+        <ul id="functions-arpeggio-list" class="functions-ref-list"></ul>
+      </details>
+
+      <details class="editor-section" open>
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Auto Harmonize (12 types)</summary>
+        <ul id="functions-harmonize-list" class="functions-ref-list functions-ref-list-wide"></ul>
+      </details>
+
+      <details class="editor-section">
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Layer / Split / Duet</summary>
         <p class="functions-local-note">
-          Layer, Split, Duet : boutons dédiés sur le piano, pas de contrôle à distance possible
-          non plus.
+          Boutons dédiés sur le piano (LAYER, SPLIT, appui long sur TONE pour Duet) — pas de
+          contrôle à distance possible non plus.
         </p>
       </details>
     </div>

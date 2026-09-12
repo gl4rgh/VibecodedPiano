@@ -1,99 +1,28 @@
-import { MidiOutput } from '../core/midi-output.js';
 import { TONES, TONE_CATEGORIES } from '../data/tones.js';
-import { REVERB_TYPES, CHORUS_TYPES } from '../data/effects.js';
 import { ARPEGGIATOR_TYPES } from '../data/arpeggiator-types.js';
 import { AUTO_HARMONIZE_TYPES } from '../data/auto-harmonize-types.js';
 
-// SysEx Universal Real Time "Reverb/Chorus Type" (MIDI Implementation §12.1.4/12.1.6) : préfixe
-// commun avant l'octet de valeur, sans F0/F7 (MidiOutput.sysex() les ajoute).
-const REVERB_TYPE_SYSEX_PREFIX = [0x7f, 0x7f, 0x04, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00];
-const CHORUS_TYPE_SYSEX_PREFIX = [0x7f, 0x7f, 0x04, 0x05, 0x01, 0x01, 0x01, 0x01, 0x02, 0x00];
-const CC_REVERB_SEND = 0x5b;
-const CC_CHORUS_SEND = 0x5d;
-const CC_CHANNEL_VOLUME = 0x07;
-
 /**
- * Panneau « Fonctionnalités » : connexion à une sortie MIDI, choix du son (Bank Select + Program
- * Change), Reverb/Chorus (type en SysEx Universal Real Time, niveau d'envoi en Control Change) et
- * volume du canal — tout envoyé dès l'interaction si une sortie est sélectionnée. Tables de
- * référence en lecture seule pour l'arpégiateur et l'auto harmonize — non pilotables en MIDI sur
- * ce piano (voir datamining/README.md §1-3), affichées uniquement pour que l'utilisateur sache
- * quoi régler à la main.
+ * Panneau « Fonctionnalités » : pure référence, rien n'est envoyé au piano. Recherche parmi les
+ * 700 sons pour connaître le numéro à composer sur l'instrument, et tables de référence pour
+ * l'arpégiateur (100 types) et l'auto harmonize (12 types) — aucun des trois n'est pilotable en
+ * MIDI sur ce piano (Upper1, la partie qui sonne au clavier, n'a pas de canal de réception MIDI ;
+ * voir datamining/README.md §0), donc tout se règle à la main sur l'instrument.
  *
  * @param {HTMLElement} toggleBtn
  * @param {HTMLElement} panel
  * @returns {{ open: () => void, close: () => void, toggle: () => void }}
  */
 export function mountFunctionsPanel(toggleBtn, panel) {
-  const connectBtn = panel.querySelector('#functions-connect-midi');
-  const portSelect = panel.querySelector('#functions-midi-port-select');
-  const statusEl = panel.querySelector('#functions-midi-status');
-  const channelSelect = panel.querySelector('#functions-midi-channel');
   const searchInput = panel.querySelector('#functions-tone-search');
   const toneSelect = panel.querySelector('#functions-tone-select');
   const toneSelectedEl = panel.querySelector('#functions-tone-selected');
-  const reverbSelect = panel.querySelector('#functions-reverb');
-  const reverbLevel = panel.querySelector('#functions-reverb-level');
-  const chorusSelect = panel.querySelector('#functions-chorus');
-  const chorusLevel = panel.querySelector('#functions-chorus-level');
-  const channelVolume = panel.querySelector('#functions-channel-volume');
   const arpeggioListEl = panel.querySelector('#functions-arpeggio-list');
   const harmonizeListEl = panel.querySelector('#functions-harmonize-list');
   const closeBtn = panel.querySelector('#functions-close');
 
-  const midiOutput = new MidiOutput();
-
-  populateChannels();
   populateTones();
-  populateEffects();
   populateReferenceLists();
-
-  midiOutput.addEventListener('statechange', (e) => renderPorts(e.detail.outputs));
-  midiOutput.addEventListener('error', (e) => console.error('[functions] MIDI', e.detail.message));
-
-  connectBtn.addEventListener('click', async () => {
-    connectBtn.disabled = true;
-    setMidiStatus('requesting');
-    await midiOutput.connect();
-    setMidiStatus(midiOutput.status);
-    connectBtn.disabled = false;
-  });
-
-  portSelect.addEventListener('change', () => {
-    midiOutput.selectOutput(portSelect.value || null);
-    updateEffectsEnabled();
-  });
-
-  /** Les contrôles d'effets n'ont aucun effet tant qu'aucune sortie MIDI n'est sélectionnée —
-   * on les désactive plutôt que de les laisser agir dans le vide silencieusement. */
-  function updateEffectsEnabled() {
-    const connected = midiOutput.selectedOutput != null;
-    for (const el of [reverbSelect, reverbLevel, chorusSelect, chorusLevel, channelVolume]) {
-      el.disabled = !connected;
-    }
-  }
-  updateEffectsEnabled();
-
-  function setMidiStatus(status) {
-    statusEl.textContent = status;
-    statusEl.dataset.status = status;
-  }
-
-  function renderPorts(outputs) {
-    const previousValue = portSelect.value;
-    portSelect.innerHTML = '<option value="">Aucun port</option>';
-    for (const output of outputs) {
-      const option = new Option(`${output.name} (${output.state})`, output.id);
-      portSelect.appendChild(option);
-    }
-    portSelect.value = previousValue;
-  }
-
-  function populateChannels() {
-    for (let ch = 0; ch < 16; ch++) {
-      channelSelect.appendChild(new Option(`Canal ${ch + 1}`, String(ch)));
-    }
-  }
 
   function populateTones() {
     for (const { name, tones } of TONE_CATEGORIES) {
@@ -104,15 +33,6 @@ export function mountFunctionsPanel(toggleBtn, panel) {
         group.appendChild(option);
       }
       toneSelect.appendChild(group);
-    }
-  }
-
-  function populateEffects() {
-    for (const { value, name } of REVERB_TYPES) {
-      reverbSelect.appendChild(new Option(name, String(value)));
-    }
-    for (const { value, name } of CHORUS_TYPES) {
-      chorusSelect.appendChild(new Option(name, String(value)));
     }
   }
 
@@ -142,34 +62,8 @@ export function mountFunctionsPanel(toggleBtn, panel) {
   toneSelect.addEventListener('change', () => {
     const tone = TONES.find((t) => t.number === Number(toneSelect.value));
     if (!tone) return;
-
-    const channel = Number(channelSelect.value);
-    const sent = midiOutput.selectedOutput != null;
-    if (sent) {
-      midiOutput.bankSelectMSB(channel, tone.bankSelectMSB);
-      midiOutput.programChange(channel, tone.programChange);
-    }
-
     toneSelectedEl.textContent =
-      `${tone.name} (${tone.category} · Program Change ${tone.programChange} · ` +
-      `Bank Select MSB ${tone.bankSelectMSB})` +
-      (sent ? ' — envoyé au piano.' : ' — pas envoyé (connecte une sortie MIDI d\'abord).');
-  });
-
-  reverbSelect.addEventListener('change', () => {
-    midiOutput.sysex([...REVERB_TYPE_SYSEX_PREFIX, Number(reverbSelect.value)]);
-  });
-  reverbLevel.addEventListener('input', () => {
-    midiOutput.controlChange(Number(channelSelect.value), CC_REVERB_SEND, Number(reverbLevel.value));
-  });
-  chorusSelect.addEventListener('change', () => {
-    midiOutput.sysex([...CHORUS_TYPE_SYSEX_PREFIX, Number(chorusSelect.value)]);
-  });
-  chorusLevel.addEventListener('input', () => {
-    midiOutput.controlChange(Number(channelSelect.value), CC_CHORUS_SEND, Number(chorusLevel.value));
-  });
-  channelVolume.addEventListener('input', () => {
-    midiOutput.controlChange(Number(channelSelect.value), CC_CHANNEL_VOLUME, Number(channelVolume.value));
+      `${tone.name} → compose le numéro ${tone.number} sur le piano (catégorie ${tone.category}).`;
   });
 
   closeBtn.addEventListener('click', close);
