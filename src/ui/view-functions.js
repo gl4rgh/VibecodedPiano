@@ -4,13 +4,21 @@ import { REVERB_TYPES, CHORUS_TYPES } from '../data/effects.js';
 import { ARPEGGIATOR_TYPES } from '../data/arpeggiator-types.js';
 import { AUTO_HARMONIZE_TYPES } from '../data/auto-harmonize-types.js';
 
+// SysEx Universal Real Time "Reverb/Chorus Type" (MIDI Implementation §12.1.4/12.1.6) : préfixe
+// commun avant l'octet de valeur, sans F0/F7 (MidiOutput.sysex() les ajoute).
+const REVERB_TYPE_SYSEX_PREFIX = [0x7f, 0x7f, 0x04, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00];
+const CHORUS_TYPE_SYSEX_PREFIX = [0x7f, 0x7f, 0x04, 0x05, 0x01, 0x01, 0x01, 0x01, 0x02, 0x00];
+const CC_REVERB_SEND = 0x5b;
+const CC_CHORUS_SEND = 0x5d;
+const CC_CHANNEL_VOLUME = 0x07;
+
 /**
- * Panneau « Fonctionnalités » : connexion à une sortie MIDI, choix du son (envoie Bank Select +
- * Program Change dès la sélection), et des effets Reverb/Chorus (UI prête, envoi MIDI à l'Étape 5
- * de fonctions.md — SysEx Universal Real Time). Tables de référence en lecture seule pour
- * l'arpégiateur et l'auto harmonize — non pilotables en MIDI sur ce piano (voir
- * datamining/README.md §1-3), affichées uniquement pour que l'utilisateur sache quoi régler à la
- * main.
+ * Panneau « Fonctionnalités » : connexion à une sortie MIDI, choix du son (Bank Select + Program
+ * Change), Reverb/Chorus (type en SysEx Universal Real Time, niveau d'envoi en Control Change) et
+ * volume du canal — tout envoyé dès l'interaction si une sortie est sélectionnée. Tables de
+ * référence en lecture seule pour l'arpégiateur et l'auto harmonize — non pilotables en MIDI sur
+ * ce piano (voir datamining/README.md §1-3), affichées uniquement pour que l'utilisateur sache
+ * quoi régler à la main.
  *
  * @param {HTMLElement} toggleBtn
  * @param {HTMLElement} panel
@@ -25,7 +33,10 @@ export function mountFunctionsPanel(toggleBtn, panel) {
   const toneSelect = panel.querySelector('#functions-tone-select');
   const toneSelectedEl = panel.querySelector('#functions-tone-selected');
   const reverbSelect = panel.querySelector('#functions-reverb');
+  const reverbLevel = panel.querySelector('#functions-reverb-level');
   const chorusSelect = panel.querySelector('#functions-chorus');
+  const chorusLevel = panel.querySelector('#functions-chorus-level');
+  const channelVolume = panel.querySelector('#functions-channel-volume');
   const arpeggioListEl = panel.querySelector('#functions-arpeggio-list');
   const harmonizeListEl = panel.querySelector('#functions-harmonize-list');
   const closeBtn = panel.querySelector('#functions-close');
@@ -50,7 +61,18 @@ export function mountFunctionsPanel(toggleBtn, panel) {
 
   portSelect.addEventListener('change', () => {
     midiOutput.selectOutput(portSelect.value || null);
+    updateEffectsEnabled();
   });
+
+  /** Les contrôles d'effets n'ont aucun effet tant qu'aucune sortie MIDI n'est sélectionnée —
+   * on les désactive plutôt que de les laisser agir dans le vide silencieusement. */
+  function updateEffectsEnabled() {
+    const connected = midiOutput.selectedOutput != null;
+    for (const el of [reverbSelect, reverbLevel, chorusSelect, chorusLevel, channelVolume]) {
+      el.disabled = !connected;
+    }
+  }
+  updateEffectsEnabled();
 
   function setMidiStatus(status) {
     statusEl.textContent = status;
@@ -134,7 +156,21 @@ export function mountFunctionsPanel(toggleBtn, panel) {
       (sent ? ' — envoyé au piano.' : ' — pas envoyé (connecte une sortie MIDI d\'abord).');
   });
 
-  // Reverb/Chorus : UI prête (voir populateEffects), envoi MIDI (SysEx) à l'Étape 5.
+  reverbSelect.addEventListener('change', () => {
+    midiOutput.sysex([...REVERB_TYPE_SYSEX_PREFIX, Number(reverbSelect.value)]);
+  });
+  reverbLevel.addEventListener('input', () => {
+    midiOutput.controlChange(Number(channelSelect.value), CC_REVERB_SEND, Number(reverbLevel.value));
+  });
+  chorusSelect.addEventListener('change', () => {
+    midiOutput.sysex([...CHORUS_TYPE_SYSEX_PREFIX, Number(chorusSelect.value)]);
+  });
+  chorusLevel.addEventListener('input', () => {
+    midiOutput.controlChange(Number(channelSelect.value), CC_CHORUS_SEND, Number(chorusLevel.value));
+  });
+  channelVolume.addEventListener('input', () => {
+    midiOutput.controlChange(Number(channelSelect.value), CC_CHANNEL_VOLUME, Number(channelVolume.value));
+  });
 
   closeBtn.addEventListener('click', close);
   toggleBtn.addEventListener('click', toggle);

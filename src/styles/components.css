@@ -145,6 +145,40 @@ details[open] > summary .caret {
   border-color: var(--color-accent);
 }
 
+.settings-grid input[type='range'] {
+  width: 100%;
+  height: 34px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.settings-grid input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+}
+.settings-grid input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: none;
+}
+.settings-grid input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+}
+.settings-grid input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: none;
+}
+
 /* --- Bibliothèque -------------------------------------------------------------------- */
 
 .library-add-form {
