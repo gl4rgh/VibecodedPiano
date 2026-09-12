@@ -1009,6 +1009,27 @@ details[open] > summary .caret {
   margin: 0 0 var(--space-3);
 }
 
+.functions-channel-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  margin: 0 0 var(--space-3);
+}
+.functions-channel-label select {
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: 0 10px;
+  font: inherit;
+}
+.functions-channel-label select:focus-visible {
+  border-color: var(--color-accent);
+}
+
 .functions-tone-picker {
   display: flex;
   flex-direction: column;

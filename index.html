@@ -288,6 +288,21 @@
         Casio), les numéros de son et les réglages ci-dessous ne correspondront à rien de bon.
       </p>
 
+      <div class="editor-io">
+        <button type="button" id="functions-connect-midi">
+          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
+          Connecter la sortie MIDI
+        </button>
+        <select id="functions-midi-port-select" aria-label="Port MIDI de sortie">
+          <option value="">Aucun port</option>
+        </select>
+        <span id="functions-midi-status" class="midi-status" data-status="idle">idle</span>
+      </div>
+      <label class="functions-channel-label">
+        Canal MIDI (= réglage "Keybd Ch" du piano, 1 par défaut)
+        <select id="functions-midi-channel" aria-label="Canal MIDI de sortie"></select>
+      </label>
+
       <details class="editor-section" open>
         <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Changer de son</summary>
         <div class="functions-tone-picker">

@@ -1,25 +1,26 @@
+import { MidiOutput } from '../core/midi-output.js';
 import { TONES, TONE_CATEGORIES } from '../data/tones.js';
 import { REVERB_TYPES, CHORUS_TYPES } from '../data/effects.js';
 import { ARPEGGIATOR_TYPES } from '../data/arpeggiator-types.js';
 import { AUTO_HARMONIZE_TYPES } from '../data/auto-harmonize-types.js';
 
 /**
- * Panneau « Fonctionnalités » : choix du son (Bank Select + Program Change) et des effets
- * (Reverb/Chorus), plus des tables de référence en lecture seule pour l'arpégiateur et l'auto
- * harmonize — non pilotables en MIDI sur ce piano (voir datamining/README.md §1-3), affichés
- * uniquement pour que l'utilisateur sache quoi régler à la main.
- *
- * N'envoie encore aucun message MIDI (Étape 3 de fonctions.md) : les callbacks onToneSelect/
- * onReverbChange/onChorusChange exposés ici serviront de point de branchement à l'Étape 4.
+ * Panneau « Fonctionnalités » : connexion à une sortie MIDI, choix du son (envoie Bank Select +
+ * Program Change dès la sélection), et des effets Reverb/Chorus (UI prête, envoi MIDI à l'Étape 5
+ * de fonctions.md — SysEx Universal Real Time). Tables de référence en lecture seule pour
+ * l'arpégiateur et l'auto harmonize — non pilotables en MIDI sur ce piano (voir
+ * datamining/README.md §1-3), affichées uniquement pour que l'utilisateur sache quoi régler à la
+ * main.
  *
  * @param {HTMLElement} toggleBtn
  * @param {HTMLElement} panel
- * @returns {{ open: () => void, close: () => void, toggle: () => void,
- *   onToneSelect: (cb: (tone: import('../data/tones.js').Tone) => void) => void,
- *   onReverbChange: (cb: (value: number) => void) => void,
- *   onChorusChange: (cb: (value: number) => void) => void }}
+ * @returns {{ open: () => void, close: () => void, toggle: () => void }}
  */
 export function mountFunctionsPanel(toggleBtn, panel) {
+  const connectBtn = panel.querySelector('#functions-connect-midi');
+  const portSelect = panel.querySelector('#functions-midi-port-select');
+  const statusEl = panel.querySelector('#functions-midi-status');
+  const channelSelect = panel.querySelector('#functions-midi-channel');
   const searchInput = panel.querySelector('#functions-tone-search');
   const toneSelect = panel.querySelector('#functions-tone-select');
   const toneSelectedEl = panel.querySelector('#functions-tone-selected');
@@ -29,13 +30,48 @@ export function mountFunctionsPanel(toggleBtn, panel) {
   const harmonizeListEl = panel.querySelector('#functions-harmonize-list');
   const closeBtn = panel.querySelector('#functions-close');
 
-  let onToneSelectCb = null;
-  let onReverbChangeCb = null;
-  let onChorusChangeCb = null;
+  const midiOutput = new MidiOutput();
 
+  populateChannels();
   populateTones();
   populateEffects();
   populateReferenceLists();
+
+  midiOutput.addEventListener('statechange', (e) => renderPorts(e.detail.outputs));
+  midiOutput.addEventListener('error', (e) => console.error('[functions] MIDI', e.detail.message));
+
+  connectBtn.addEventListener('click', async () => {
+    connectBtn.disabled = true;
+    setMidiStatus('requesting');
+    await midiOutput.connect();
+    setMidiStatus(midiOutput.status);
+    connectBtn.disabled = false;
+  });
+
+  portSelect.addEventListener('change', () => {
+    midiOutput.selectOutput(portSelect.value || null);
+  });
+
+  function setMidiStatus(status) {
+    statusEl.textContent = status;
+    statusEl.dataset.status = status;
+  }
+
+  function renderPorts(outputs) {
+    const previousValue = portSelect.value;
+    portSelect.innerHTML = '<option value="">Aucun port</option>';
+    for (const output of outputs) {
+      const option = new Option(`${output.name} (${output.state})`, output.id);
+      portSelect.appendChild(option);
+    }
+    portSelect.value = previousValue;
+  }
+
+  function populateChannels() {
+    for (let ch = 0; ch < 16; ch++) {
+      channelSelect.appendChild(new Option(`Canal ${ch + 1}`, String(ch)));
+    }
+  }
 
   function populateTones() {
     for (const { name, tones } of TONE_CATEGORIES) {
@@ -84,14 +120,21 @@ export function mountFunctionsPanel(toggleBtn, panel) {
   toneSelect.addEventListener('change', () => {
     const tone = TONES.find((t) => t.number === Number(toneSelect.value));
     if (!tone) return;
+
+    const channel = Number(channelSelect.value);
+    const sent = midiOutput.selectedOutput != null;
+    if (sent) {
+      midiOutput.bankSelectMSB(channel, tone.bankSelectMSB);
+      midiOutput.programChange(channel, tone.programChange);
+    }
+
     toneSelectedEl.textContent =
       `${tone.name} (${tone.category} · Program Change ${tone.programChange} · ` +
-      `Bank Select MSB ${tone.bankSelectMSB})`;
-    onToneSelectCb?.(tone);
+      `Bank Select MSB ${tone.bankSelectMSB})` +
+      (sent ? ' — envoyé au piano.' : ' — pas envoyé (connecte une sortie MIDI d\'abord).');
   });
 
-  reverbSelect.addEventListener('change', () => onReverbChangeCb?.(Number(reverbSelect.value)));
-  chorusSelect.addEventListener('change', () => onChorusChangeCb?.(Number(chorusSelect.value)));
+  // Reverb/Chorus : UI prête (voir populateEffects), envoi MIDI (SysEx) à l'Étape 5.
 
   closeBtn.addEventListener('click', close);
   toggleBtn.addEventListener('click', toggle);
@@ -111,14 +154,7 @@ export function mountFunctionsPanel(toggleBtn, panel) {
     else close();
   }
 
-  return {
-    open,
-    close,
-    toggle,
-    onToneSelect(cb) { onToneSelectCb = cb; },
-    onReverbChange(cb) { onReverbChangeCb = cb; },
-    onChorusChange(cb) { onChorusChangeCb = cb; },
-  };
+  return { open, close, toggle };
 }
 
 function escapeHtml(str) {
