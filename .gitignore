@@ -7,3 +7,5 @@ dist/
 !examples/*.pdf
 !examples/*.mid
 plan.md
+fonctions.md
+datamining/
