@@ -266,6 +266,68 @@
         </div>
       </section>
     </main>
+
+    <button type="button" id="functions-toggle" class="functions-toggle" aria-label="Fonctionnalités du piano" aria-expanded="false" aria-controls="functions-panel">
+      <svg width="20" height="20" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round">
+        <line x1="32" y1="64" x2="224" y2="64" /><circle cx="104" cy="64" r="16" fill="currentColor" stroke="none" />
+        <line x1="32" y1="128" x2="224" y2="128" /><circle cx="176" cy="128" r="16" fill="currentColor" stroke="none" />
+        <line x1="32" y1="192" x2="224" y2="192" /><circle cx="72" cy="192" r="16" fill="currentColor" stroke="none" />
+      </svg>
+    </button>
+
+    <div id="functions-panel" class="functions-panel" hidden role="dialog" aria-label="Fonctionnalités du piano">
+      <div class="functions-panel-header">
+        <h2>Fonctionnalités du piano</h2>
+        <button type="button" id="functions-close" class="icon-btn" aria-label="Fermer">
+          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
+        </button>
+      </div>
+
+      <details class="editor-section" open>
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Changer de son</summary>
+        <div class="functions-tone-picker">
+          <input type="search" id="functions-tone-search" placeholder="Rechercher un son…" aria-label="Rechercher un son" />
+          <select id="functions-tone-select" size="8" aria-label="Liste des sons"></select>
+          <p id="functions-tone-selected" class="functions-tone-selected">Aucun son sélectionné.</p>
+        </div>
+      </details>
+
+      <details class="editor-section">
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Effets</summary>
+        <div class="settings-grid">
+          <label>
+            Reverb
+            <select id="functions-reverb" aria-label="Type de reverb"></select>
+          </label>
+          <label>
+            Chorus
+            <select id="functions-chorus" aria-label="Type de chorus"></select>
+          </label>
+        </div>
+      </details>
+
+      <details class="editor-section">
+        <summary><svg class="caret" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>Arpégiateur &amp; Auto Harmonize (info)</summary>
+        <p class="functions-local-note">
+          Pas de commande MIDI documentée pour piloter ces réglages à distance — à changer
+          directement sur le piano (bouton A.HAR./ARPEG. + molette). Listes fournies à titre de
+          référence pour savoir quoi chercher sur l'instrument.
+        </p>
+        <details class="functions-subsection">
+          <summary>100 types d'arpège</summary>
+          <ul id="functions-arpeggio-list" class="functions-ref-list"></ul>
+        </details>
+        <details class="functions-subsection">
+          <summary>12 types d'Auto Harmonize</summary>
+          <ul id="functions-harmonize-list" class="functions-ref-list"></ul>
+        </details>
+        <p class="functions-local-note">
+          Layer, Split, Duet : boutons dédiés sur le piano, pas de contrôle à distance possible
+          non plus.
+        </p>
+      </details>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

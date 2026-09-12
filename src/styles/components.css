@@ -943,3 +943,125 @@ details[open] > summary .caret {
 .toast-close:hover {
   background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
+
+/* --- Panneau "Fonctionnalités" (ui/view-functions.js) -------------------------------------- */
+/* Position fixe, en dehors du flux des vues routées (#app overflow:hidden) : accessible depuis
+   la bibliothèque, l'éditeur ou le mode jeu sans dépendre du hash courant. */
+
+.functions-toggle {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+  box-shadow: var(--shadow-md);
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.functions-toggle:hover,
+.functions-toggle[aria-expanded='true'] {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.functions-panel {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(44px + var(--space-4) * 2);
+  z-index: 10;
+  width: min(380px, calc(100vw - var(--space-4) * 2));
+  max-height: min(640px, calc(100dvh - 120px));
+  overflow-y: auto;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.functions-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.functions-panel-header h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.functions-tone-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.functions-tone-picker input[type='search'],
+.functions-tone-picker select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+.functions-tone-picker input[type='search'] {
+  height: 36px;
+  padding: 0 10px;
+}
+.functions-tone-picker select {
+  padding: var(--space-2);
+}
+.functions-tone-picker input[type='search']:focus-visible,
+.functions-tone-picker select:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.functions-tone-selected {
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  margin: 0;
+}
+
+.functions-local-note {
+  font-size: 0.78rem;
+  color: var(--color-text-dim);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  margin: var(--space-2) 0;
+}
+
+.functions-subsection {
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-2);
+}
+.functions-subsection summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.functions-ref-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 0.78rem;
+  color: var(--color-text-dim);
+  display: grid;
+  gap: 2px;
+}
+.functions-ref-list li {
+  padding: 2px 4px;
+}

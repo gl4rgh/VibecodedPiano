@@ -2,6 +2,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { mountLibraryView } from './ui/view-library.js';
 import { mountEditorView } from './ui/view-editor.js';
 import { mountPlayView } from './ui/view-play.js';
+import { mountFunctionsPanel } from './ui/view-functions.js';
 import { showBanner } from './ui/toast.js';
 
 // PWA : registerType 'autoUpdate' télécharge la mise à jour en tâche de fond, mais n'active
@@ -52,6 +53,13 @@ document.querySelectorAll('input[name="note-scheme"]').forEach((radio) => {
 const libraryView = mountLibraryView(views.library);
 const editorView = mountEditorView(views.editor);
 const playView = mountPlayView(views.play);
+
+// Panneau global, indépendant du routeur (accessible depuis n'importe quelle vue) : voir
+// fonctions.md Phase A / Étape 3. Pas encore branché à une sortie MIDI (Étape 4).
+mountFunctionsPanel(
+  document.getElementById('functions-toggle'),
+  document.getElementById('functions-panel'),
+);
 
 let currentRoute = null;
 
