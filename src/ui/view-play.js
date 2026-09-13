@@ -6,6 +6,7 @@ import { getPiece, getGlobalSettings } from '../core/store.js';
 import { sortAnchors, resolveActiveAnchor } from '../core/anchors.js';
 import { Hud } from './hud.js';
 import { mountRecorderControls } from './recorder-controls.js';
+import { mountFileExplorer } from './file-explorer.js';
 import { ScreenWakeLock } from '../util/wake-lock.js';
 import { noteName } from '../util/note-names.js';
 import { resolveSettings } from '../core/settings.js';
@@ -39,6 +40,7 @@ export function mountPlayView(container) {
   const diagnosticBtn = container.querySelector('#play-diagnostic');
   const diagnosticPanelEl = container.querySelector('#play-diagnostic-panel');
   const recorderControlsEl = container.querySelector('.recorder-controls');
+  const explorerPanelEl = container.querySelector('#explorer-panel');
 
   const pdfViewer = new PdfViewer(pdfContainer, {
     onZoomChange: (scale) => {
@@ -51,7 +53,13 @@ export function mountPlayView(container) {
   // Enregistreur (fonctions.md Phase B, Étape B2) : écoute noteon/noteoff sur le même midiInput
   // que le suivi de partition, indépendamment de matcher/paused — on veut pouvoir enregistrer
   // même hors morceau chargé ou pendant une pause du suivi.
-  mountRecorderControls(recorderControlsEl, midiInput);
+  let recorderApi = null;
+  // Explorateur de fichiers (Étape B4) : accès lazy à recorderApi car mounté avant elle (le
+  // callback onChange du recorder ci-dessous a besoin de fileExplorer, et vice versa).
+  const fileExplorer = mountFileExplorer(explorerPanelEl, () => recorderApi.getRecorder());
+  recorderApi = mountRecorderControls(recorderControlsEl, midiInput, {
+    onChange: () => fileExplorer?.refresh(),
+  });
 
   /** @type {import('../core/store.js').Piece | null} */
   let piece = null;

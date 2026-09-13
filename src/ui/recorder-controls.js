@@ -1,4 +1,5 @@
 import { Recorder } from '../core/recorder.js';
+import { recordingFilename } from '../util/recording-filename.js';
 
 const ICON_RECORD =
   '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="80"/></svg>';
@@ -23,9 +24,11 @@ const STATUS_LABELS = {
  * + libellé, même principe que `.hud-midi-dot`). Pas de sauvegarde ici — voir Étape B3.
  * @param {HTMLElement} container  doit contenir #record-start/#record-pause/#record-stop/#record-dot/#record-label
  * @param {import('../core/midi-input.js').MidiInput} midiInput
+ * @param {{ onChange?: () => void }} [opts]  appelé après chaque changement d'état (ex. l'explorateur
+ *   de fichiers, Étape B4, doit re-vérifier s'il peut proposer "Enregistrer ici" quand on passe à `stopped`)
  * @returns {{ getRecorder: () => Recorder }}
  */
-export function mountRecorderControls(container, midiInput) {
+export function mountRecorderControls(container, midiInput, { onChange } = {}) {
   const startBtn = container.querySelector('#record-start');
   const pauseBtn = container.querySelector('#record-pause');
   const stopBtn = container.querySelector('#record-stop');
@@ -76,6 +79,8 @@ export function mountRecorderControls(container, midiInput) {
 
     stopBtn.hidden = !active;
     downloadBtn.hidden = state !== 'stopped';
+
+    onChange?.();
   }
 
   refresh();
@@ -95,13 +100,7 @@ function downloadTake(recorder) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `piano-${filenameTimestamp()}.mid`;
+  link.download = recordingFilename();
   link.click();
   URL.revokeObjectURL(url);
-}
-
-function filenameTimestamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
 }
