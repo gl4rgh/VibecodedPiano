@@ -1,8 +1,6 @@
 /**
- * Table des 700 sons du CASIO CDP-S360/EP-S330 (Program Change + Bank Select MSB).
- * Généré depuis datamining/tones.json — voir datamining/README.md §5 pour la source
- * (PDF « Built-in Music Data Lists ») et la méthode de vérification (recoupement GM).
- * Régénérer plutôt que modifier à la main.
+ * Table des 700 sons du CASIO CDP-S360/EP-S330 (Program Change + Bank Select MSB), issue du
+ * manuel « Built-in Music Data Lists ». Régénérer plutôt que modifier à la main.
  */
 
 /**

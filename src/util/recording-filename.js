@@ -1,7 +1,5 @@
 /**
- * Nom de fichier `.mid` horodaté pour une prise exportée depuis l'enregistreur (Phase B) —
- * partagé entre le téléchargement classique (Étape B3) et l'explorateur de fichiers (Étape B4)
- * pour garder un nommage cohérent quel que soit le chemin de sauvegarde choisi.
+ * Nom de fichier `.mid` horodaté pour une prise exportée depuis l'enregistreur.
  * @returns {string}
  */
 export function recordingFilename() {

@@ -18,14 +18,12 @@ const STATUS_LABELS = {
 };
 
 /**
- * Boutons Record/Pause/Stop de l'enregistreur intégré (fonctions.md Phase B, Étape B2). Relaie
- * les events `noteon`/`noteoff` de `midiInput` (src/core/midi-input.js) vers un `Recorder`
- * (src/core/recorder.js) et reflète son état idle/recording/paused/stopped visuellement (pastille
- * + libellé, même principe que `.hud-midi-dot`). Pas de sauvegarde ici — voir Étape B3.
+ * Boutons Record/Pause/Stop de l'enregistreur intégré. Relaie les events `noteon`/`noteoff` de
+ * `midiInput` vers un `Recorder` et reflète son état idle/recording/paused/stopped visuellement
+ * (pastille + libellé, même principe que `.hud-midi-dot`).
  * @param {HTMLElement} container  doit contenir #record-start/#record-pause/#record-stop/#record-dot/#record-label
  * @param {import('../core/midi-input.js').MidiInput} midiInput
- * @param {{ onChange?: () => void }} [opts]  appelé après chaque changement d'état (ex. l'explorateur
- *   de fichiers, Étape B4, doit re-vérifier s'il peut proposer "Enregistrer ici" quand on passe à `stopped`)
+ * @param {{ onChange?: () => void }} [opts]  appelé après chaque changement d'état
  * @returns {{ getRecorder: () => Recorder }}
  */
 export function mountRecorderControls(container, midiInput, { onChange } = {}) {
@@ -89,9 +87,8 @@ export function mountRecorderControls(container, midiInput, { onChange } = {}) {
 }
 
 /**
- * Filet de sécurité avant l'explorateur de fichiers (Étape B4) : téléchargement navigateur
- * classique (Blob + lien `download`), lisible en le copiant ensuite dans `MUSICDAT/` sur la clé
- * USB du piano (voir `datamining/README.md` §7).
+ * Téléchargement navigateur classique (Blob + lien `download`), lisible en le copiant ensuite
+ * dans `MUSICDAT/` sur la clé USB du piano.
  * @param {import('../core/recorder.js').Recorder} recorder
  */
 function downloadTake(recorder) {

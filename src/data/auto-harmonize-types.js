@@ -1,6 +1,5 @@
 /**
  * Les 12 types d'Auto Harmonize du CASIO CDP-S360/EP-S330 (Function 13 "AHarType").
- * Source : manuel utilisateur p.EN-36 — voir datamining/README.md §3.
  * Lecture seule : pas de commande MIDI receive documentée pour ce réglage, on ne peut que
  * l'afficher pour que l'utilisateur le règle à la main sur le piano.
  */

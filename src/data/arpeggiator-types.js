@@ -1,6 +1,5 @@
 /**
  * Les 100 types d'arpège du CASIO CDP-S360/EP-S330 (Function 14 "Arp Type").
- * Généré depuis datamining/arpeggiator-types.json — voir datamining/README.md §3 et §6.
  * Lecture seule : pas de commande MIDI receive documentée pour ce réglage, on ne peut
  * que l'afficher pour que l'utilisateur le règle à la main sur le piano.
  */

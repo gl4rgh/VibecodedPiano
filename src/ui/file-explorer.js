@@ -1,3 +1,4 @@
+import pkg from '@tonejs/midi';
 import {
   isSupported,
   pickDirectory,
@@ -5,17 +6,20 @@ import {
   hasPermission,
   ensurePermission,
   listMidiFiles,
+  readFile,
   writeFile,
 } from '../core/fs-access.js';
+import { MidiPlayback } from '../core/midi-playback.js';
 import { recordingFilename } from '../util/recording-filename.js';
 
+const { Midi } = pkg;
+
 /**
- * Explorateur de dossier (File System Access API) pour l'enregistreur intégré — Phase B, Étape
- * B4. Complète le téléchargement classique (Étape B3, toujours dispo) par un aller-retour direct
- * avec une clé USB : choisir le dossier `MUSICDAT/` une fois, puis enregistrer dedans à chaque
- * prise sans repasser par le dossier Téléchargements. Se masque entièrement si l'API n'est pas
- * supportée (Firefox/Safari) — Étape B3 reste alors le seul chemin de sauvegarde, sans rien à
- * faire de spécial côté appelant.
+ * Explorateur de dossier (File System Access API) : choisir un dossier une fois (typiquement
+ * `MUSICDAT/` sur la clé USB du piano), y enregistrer une prise et relire les fichiers `.mid`
+ * qu'il contient. Se masque entièrement si l'API n'est pas supportée (Firefox/Safari) — le
+ * téléchargement classique reste alors le seul chemin de sauvegarde, sans rien à faire côté
+ * appelant.
  * @param {HTMLElement} container  doit contenir #explorer-action/#explorer-dirname/#explorer-save/#explorer-files/#explorer-status
  * @param {() => import('../core/recorder.js').Recorder} getRecorder
  */
@@ -36,6 +40,9 @@ export function mountFileExplorer(container, getRecorder) {
   let dirHandle = null;
   /** @type {FileSystemDirectoryHandle | null} handle mémorisé mais permission pas (encore) confirmée */
   let pendingHandle = null;
+  let files = [];
+  let playingName = null;
+  const playback = new MidiPlayback();
 
   actionBtn.addEventListener('click', async () => {
     try {
@@ -71,6 +78,34 @@ export function mountFileExplorer(container, getRecorder) {
     }
   });
 
+  fileListEl.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.explorer-play');
+    if (!btn || !dirHandle) return;
+    const name = btn.dataset.name;
+
+    if (playingName === name) {
+      playback.stop();
+      playingName = null;
+      renderFiles();
+      return;
+    }
+
+    try {
+      const buf = await readFile(dirHandle, name);
+      const notes = new Midi(buf).tracks.flatMap((t) => t.notes);
+      playingName = name;
+      renderFiles();
+      playback.play(notes, {
+        onEnd: () => {
+          playingName = null;
+          renderFiles();
+        },
+      });
+    } catch (err) {
+      setStatus(`Lecture impossible : ${err.message}`);
+    }
+  });
+
   async function refresh() {
     const active = dirHandle && !pendingHandle;
 
@@ -88,15 +123,15 @@ export function mountFileExplorer(container, getRecorder) {
 
     saveBtn.hidden = !active || getRecorder().state !== 'stopped';
 
-    if (!active) {
-      fileListEl.innerHTML = '';
-      return;
-    }
-    const files = await listMidiFiles(dirHandle);
+    playback.stop();
+    playingName = null;
+    files = active ? await listMidiFiles(dirHandle) : [];
+    renderFiles();
+  }
+
+  function renderFiles() {
     fileListEl.innerHTML = files.length
-      ? files
-          .map((f) => `<li>${escapeHtml(f.name)} <span class="explorer-file-size">${formatSize(f.size)}</span></li>`)
-          .join('')
+      ? files.map((f) => fileRowHtml(f, f.name === playingName)).join('')
       : '<li class="explorer-empty">Aucun fichier .mid dans ce dossier.</li>';
   }
 
@@ -113,14 +148,22 @@ export function mountFileExplorer(container, getRecorder) {
     if (await hasPermission(remembered)) {
       dirHandle = remembered;
     } else {
-      // Ne pas appeler requestPermission ici : hors geste utilisateur, les navigateurs
-      // l'ignorent silencieusement. On attend un clic sur actionBtn pour la redemander.
+      // Hors geste utilisateur, requestPermission() est ignoré par les navigateurs : on
+      // attend un clic sur actionBtn pour la redemander plutôt que de l'appeler ici.
       pendingHandle = remembered;
     }
     await refresh();
   })();
 
   return { refresh };
+}
+
+/** @param {{name:string, size:number}} file @param {boolean} isPlaying */
+function fileRowHtml(file, isPlaying) {
+  return (
+    `<li><button type="button" class="explorer-play" data-name="${escapeHtml(file.name)}">${isPlaying ? '⏹' : '▶'}</button> ` +
+    `${escapeHtml(file.name)} <span class="explorer-file-size">${formatSize(file.size)}</span></li>`
+  );
 }
 
 /** @param {number} bytes */

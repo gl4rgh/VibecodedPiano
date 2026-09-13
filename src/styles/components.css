@@ -837,7 +837,7 @@ details[open] > summary .caret {
   gap: var(--space-2);
 }
 
-/* --- Enregistreur intégré (fonctions.md Phase B) ----------------------------------------- */
+/* --- Enregistreur intégré ------------------------------------------------------------------ */
 
 .recorder-controls {
   display: inline-flex;
@@ -884,7 +884,7 @@ details[open] > summary .caret {
   white-space: nowrap;
 }
 
-/* --- Explorateur de fichiers (File System Access API, Étape B4) -------------------------- */
+/* --- Explorateur de fichiers (File System Access API) ------------------------------------- */
 
 .explorer-panel {
   width: 100%;
@@ -920,6 +920,20 @@ details[open] > summary .caret {
   overflow-y: auto;
   font-family: var(--font-mono);
   color: var(--color-text-dim);
+}
+
+.explorer-play {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.7rem;
+}
+.explorer-play:hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
 
 .explorer-file-size {

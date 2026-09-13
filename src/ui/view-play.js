@@ -50,12 +50,10 @@ export function mountPlayView(container) {
   const hud = new Hud(hudContainer);
   const midiInput = new MidiInput();
   const wakeLock = new ScreenWakeLock();
-  // Enregistreur (fonctions.md Phase B, Étape B2) : écoute noteon/noteoff sur le même midiInput
-  // que le suivi de partition, indépendamment de matcher/paused — on veut pouvoir enregistrer
-  // même hors morceau chargé ou pendant une pause du suivi.
+  // Écoute noteon/noteoff sur le même midiInput que le suivi de partition, indépendamment de
+  // matcher/paused — on veut pouvoir enregistrer même hors morceau chargé ou en pause du suivi.
   let recorderApi = null;
-  // Explorateur de fichiers (Étape B4) : accès lazy à recorderApi car mounté avant elle (le
-  // callback onChange du recorder ci-dessous a besoin de fileExplorer, et vice versa).
+  // Accès lazy à recorderApi : mountFileExplorer est appelé avant que recorderApi existe.
   const fileExplorer = mountFileExplorer(explorerPanelEl, () => recorderApi.getRecorder());
   recorderApi = mountRecorderControls(recorderControlsEl, midiInput, {
     onChange: () => fileExplorer?.refresh(),

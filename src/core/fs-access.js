@@ -68,6 +68,17 @@ export async function listMidiFiles(dirHandle) {
 }
 
 /**
+ * @param {FileSystemDirectoryHandle} dirHandle
+ * @param {string} filename
+ * @returns {Promise<ArrayBuffer>}
+ */
+export async function readFile(dirHandle, filename) {
+  const fileHandle = await dirHandle.getFileHandle(filename);
+  const file = await fileHandle.getFile();
+  return file.arrayBuffer();
+}
+
+/**
  * Écrit `bytes` dans `filename` à la racine du dossier (écrase un fichier existant du même nom).
  * @param {FileSystemDirectoryHandle} dirHandle
  * @param {string} filename

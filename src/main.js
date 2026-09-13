@@ -54,8 +54,7 @@ const libraryView = mountLibraryView(views.library);
 const editorView = mountEditorView(views.editor);
 const playView = mountPlayView(views.play);
 
-// Panneau global, indépendant du routeur (accessible depuis n'importe quelle vue) : voir
-// fonctions.md Phase A / Étape 3. Pas encore branché à une sortie MIDI (Étape 4).
+// Panneau global, indépendant du routeur : accessible depuis n'importe quelle vue.
 mountFunctionsPanel(
   document.getElementById('functions-toggle'),
   document.getElementById('functions-panel'),

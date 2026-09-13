@@ -3,14 +3,14 @@ import { Midi } from '@tonejs/midi';
 /** @typedef {'idle'|'recording'|'paused'|'stopped'} RecorderState */
 
 /**
- * Enregistreur de morceau, entièrement côté app (voir fonctions.md Phase B) : capture des paires
- * noteOn/noteOff et les convertit en fichier `.mid` exportable (@tonejs/midi). Ne dépend pas de
- * `MidiInput` directement — c'est l'appelant (Étape B2, UI) qui relaie ses events `noteon`/
- * `noteoff` vers `noteOn()`/`noteOff()` ; garde le recorder testable sans navigateur/EventTarget.
+ * Enregistreur de morceau, entièrement côté app : capture des paires noteOn/noteOff et les
+ * convertit en fichier `.mid` exportable (@tonejs/midi). Ne dépend pas de `MidiInput`
+ * directement — c'est l'appelant qui relaie ses events `noteon`/`noteoff` vers
+ * `noteOn()`/`noteOff()` ; garde le recorder testable sans navigateur/EventTarget.
  *
- * Contrairement à l'enregistreur interne du piano (pas de pause, voir datamining/README.md §7),
- * la pause est gérée en excluant le temps écoulé en pause du minutage des notes, plutôt que de
- * laisser un "trou" silencieux dans le fichier exporté.
+ * Contrairement à l'enregistreur interne du piano (qui n'a pas de fonction pause), la pause est
+ * gérée ici en excluant le temps écoulé en pause du minutage des notes, plutôt que de laisser un
+ * "trou" silencieux dans le fichier exporté.
  */
 export class Recorder {
   /** @param {{ now?: () => number }} [opts] horloge injectable pour les tests */

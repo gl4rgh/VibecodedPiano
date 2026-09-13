@@ -6,8 +6,8 @@ import { AUTO_HARMONIZE_TYPES } from '../data/auto-harmonize-types.js';
  * Panneau « Fonctionnalités » : pure référence, rien n'est envoyé au piano. Recherche parmi les
  * 700 sons pour connaître le numéro à composer sur l'instrument, et tables de référence pour
  * l'arpégiateur (100 types) et l'auto harmonize (12 types) — aucun des trois n'est pilotable en
- * MIDI sur ce piano (Upper1, la partie qui sonne au clavier, n'a pas de canal de réception MIDI ;
- * voir datamining/README.md §0), donc tout se règle à la main sur l'instrument.
+ * MIDI sur ce piano (Upper1, la partie qui sonne au clavier, n'a pas de canal de réception MIDI),
+ * donc tout se règle à la main sur l'instrument.
  *
  * @param {HTMLElement} toggleBtn
  * @param {HTMLElement} panel
