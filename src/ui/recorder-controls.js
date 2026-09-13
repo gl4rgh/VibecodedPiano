@@ -6,6 +6,8 @@ const ICON_PAUSE =
   '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></svg>';
 const ICON_PLAY =
   '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>';
+const ICON_DOWNLOAD =
+  '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,152v56a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V152a8,8,0,0,1,16,0v56H208V152a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,132.69V32a8,8,0,0,0-16,0V132.69L93.66,106.34a8,8,0,0,0-11.32,11.32Z"/></svg>';
 
 const STATUS_LABELS = {
   idle: 'Prêt à enregistrer',
@@ -27,6 +29,7 @@ export function mountRecorderControls(container, midiInput) {
   const startBtn = container.querySelector('#record-start');
   const pauseBtn = container.querySelector('#record-pause');
   const stopBtn = container.querySelector('#record-stop');
+  const downloadBtn = container.querySelector('#record-download');
   const dotEl = container.querySelector('#record-dot');
   const labelEl = container.querySelector('#record-label');
 
@@ -51,6 +54,8 @@ export function mountRecorderControls(container, midiInput) {
     refresh();
   });
 
+  downloadBtn.addEventListener('click', () => downloadTake(recorder));
+
   function refresh() {
     const state = recorder.state;
     const active = state === 'recording' || state === 'paused';
@@ -70,9 +75,33 @@ export function mountRecorderControls(container, midiInput) {
         : `${ICON_PAUSE}<span class="btn-label">Pause</span>`;
 
     stopBtn.hidden = !active;
+    downloadBtn.hidden = state !== 'stopped';
   }
 
   refresh();
 
   return { getRecorder: () => recorder };
+}
+
+/**
+ * Filet de sécurité avant l'explorateur de fichiers (Étape B4) : téléchargement navigateur
+ * classique (Blob + lien `download`), lisible en le copiant ensuite dans `MUSICDAT/` sur la clé
+ * USB du piano (voir `datamining/README.md` §7).
+ * @param {import('../core/recorder.js').Recorder} recorder
+ */
+function downloadTake(recorder) {
+  const bytes = recorder.toMidi().toArray();
+  const blob = new Blob([bytes], { type: 'audio/midi' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `piano-${filenameTimestamp()}.mid`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function filenameTimestamp() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
 }
