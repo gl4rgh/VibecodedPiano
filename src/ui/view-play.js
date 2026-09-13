@@ -5,6 +5,7 @@ import { parseReference } from '../core/midi-reference.js';
 import { getPiece, getGlobalSettings } from '../core/store.js';
 import { sortAnchors, resolveActiveAnchor } from '../core/anchors.js';
 import { Hud } from './hud.js';
+import { mountRecorderControls } from './recorder-controls.js';
 import { ScreenWakeLock } from '../util/wake-lock.js';
 import { noteName } from '../util/note-names.js';
 import { resolveSettings } from '../core/settings.js';
@@ -37,6 +38,7 @@ export function mountPlayView(container) {
   const connectMidiBtn = container.querySelector('#play-connect-midi');
   const diagnosticBtn = container.querySelector('#play-diagnostic');
   const diagnosticPanelEl = container.querySelector('#play-diagnostic-panel');
+  const recorderControlsEl = container.querySelector('.recorder-controls');
 
   const pdfViewer = new PdfViewer(pdfContainer, {
     onZoomChange: (scale) => {
@@ -46,6 +48,10 @@ export function mountPlayView(container) {
   const hud = new Hud(hudContainer);
   const midiInput = new MidiInput();
   const wakeLock = new ScreenWakeLock();
+  // Enregistreur (fonctions.md Phase B, Étape B2) : écoute noteon/noteoff sur le même midiInput
+  // que le suivi de partition, indépendamment de matcher/paused — on veut pouvoir enregistrer
+  // même hors morceau chargé ou pendant une pause du suivi.
+  mountRecorderControls(recorderControlsEl, midiInput);
 
   /** @type {import('../core/store.js').Piece | null} */
   let piece = null;

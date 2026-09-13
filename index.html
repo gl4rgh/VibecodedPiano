@@ -257,6 +257,21 @@
               <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>
               Clavier
             </button>
+            <div class="recorder-controls" role="group" aria-label="Enregistreur">
+              <span id="record-dot" class="record-dot" data-status="idle"></span>
+              <span id="record-label" class="record-label">Prêt à enregistrer</span>
+              <button type="button" id="record-start">
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="80"/></svg>
+                <span class="btn-label">Enregistrer</span>
+              </button>
+              <button type="button" id="record-pause" hidden>
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></svg>
+                <span class="btn-label">Pause</span>
+              </button>
+              <button type="button" id="record-stop" hidden aria-label="Arrêter l'enregistrement" class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><rect x="48" y="48" width="160" height="160" rx="8"/></svg>
+              </button>
+            </div>
             <button type="button" id="play-diagnostic">
               <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></svg>
               Diagnostic
